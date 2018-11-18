@@ -2,7 +2,7 @@
   <v-form>
     <v-text-field
       v-model="name"
-      label="Name"
+      :label="$t('name')"
       required
     ></v-text-field>
 
@@ -11,7 +11,7 @@
       :items="publishers"
       item-text="name"
       item-value="id"
-      label="Publisher"
+      :label="$t('publisher.name')"
       required
     />
 
