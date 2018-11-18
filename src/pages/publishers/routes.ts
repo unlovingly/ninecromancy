@@ -9,7 +9,7 @@ export default [
     children: [
       {
         component: PublisherIndex,
-        name: 'publisher.indexes',
+        name: 'publisher.index',
         path: ''
       },
       {

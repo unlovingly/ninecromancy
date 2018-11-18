@@ -9,7 +9,7 @@ export default [
     children: [
       {
         component: ProductIndex,
-        name: 'product.indexes',
+        name: 'product.index',
         path: '',
       },
       {

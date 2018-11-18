@@ -8,7 +8,7 @@
 
     <v-btn
       :disabled="!valid"
-      @click="submit"
+      @click="create(name)"
     >
       submit
     </v-btn>
@@ -18,6 +18,7 @@
 <script lang="ts">
 import * as R from "ramda";
 import Vue from "vue";
+import { Publisher } from "@/models/Publisher";
 
 export default Vue.extend({
   data() {
@@ -33,7 +34,12 @@ export default Vue.extend({
   },
 
   methods: {
-    submit() {}
+    create(name: string) {
+      this.$store.dispatch(
+        "publisherModule/create",
+        new Publisher(undefined, name)
+      );
+    }
   }
 });
 </script>

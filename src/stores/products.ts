@@ -26,18 +26,19 @@ const actions = <ActionTree<State, Product>>{
       })
   },
 
-  create(store: ActionContext<State, Product>) {
-    axios('')
-      .then((r) => {
-        store.commit('retrieve', r.data)
-      })
+  create(store: ActionContext<State, Product>, product: Product) {
+    store.commit('retrieve', product)
   },
 }
 
 const mutations = <MutationTree<State>>{
   retrieve(state: State, payload: Product) {
     state.products.push(payload)
-  }
+  },
+
+  store(state: State, payload: Product) {
+    state.products.push(payload)
+  },
 }
 
 export const productModule = {

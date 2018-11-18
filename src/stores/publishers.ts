@@ -24,13 +24,21 @@ const actions = <ActionTree<State, Publisher>>{
       .then((r) => {
         store.commit('retrieve', r.data)
       })
-  }
+  },
+
+  create(store: ActionContext<State, Publisher>, publisher: Publisher) {
+    store.commit('store', publisher);
+  },
 }
 
 const mutations = <MutationTree<State>>{
   retrieve(state: State, payload: Publisher) {
     state.publishers.push(payload)
-  }
+  },
+
+  store(state: State, payload: Publisher) {
+    state.publishers.push(payload)
+  },
 }
 
 export const publisherModule = {

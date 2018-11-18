@@ -17,7 +17,7 @@
 
     <v-btn
       :disabled="!valid"
-      @click="create"
+      @click="create(name, publisher)"
     >
       submit
     </v-btn>
@@ -28,6 +28,8 @@
 import * as R from "ramda";
 import Vue from "vue";
 import { mapState } from "vuex";
+import { Publisher } from "@/models/Publisher";
+import { Product } from "@/models/Product";
 
 export default Vue.extend({
   data() {
@@ -46,8 +48,11 @@ export default Vue.extend({
   },
 
   methods: {
-    create() {
-      this.$store.dispatch("productModule/create");
+    create(name: string, publisher: Publisher) {
+      this.$store.dispatch(
+        "productModule/create",
+        new Product(undefined, name, publisher.id)
+      );
     }
   }
 });

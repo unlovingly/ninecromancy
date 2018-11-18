@@ -20,7 +20,7 @@
   >
     <template slot="items" slot-scope="props">
       <td>{{ props.item.name }}</td>
-      <td>{{ props.item.publisherId }}</td>
+      <td>{{ publisher(props.item.publisherId)[0].name }}</td>
     </template>
     <template slot="no-data">
       <v-alert :value="true" color="warning" icon="priority_high" outline>
@@ -37,8 +37,10 @@
 </template>
 
 <script lang="ts">
+import * as R from "ramda";
 import Vue from "vue";
 import { mapState } from "vuex";
+import { Publisher } from "@/models/Publisher";
 
 export default Vue.extend({
   data() {
@@ -51,7 +53,13 @@ export default Vue.extend({
     };
   },
   computed: {
-    ...mapState("productModule", ["products"])
+    ...mapState("productModule", ["products"]),
+    ...mapState("publisherModule", ["publishers"])
+  },
+  methods: {
+    publisher(id: string) {
+      return R.filter((p: Publisher) => p.id === id, this.publishers);
+    }
   }
 });
 </script>

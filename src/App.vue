@@ -3,54 +3,52 @@
     <v-navigation-drawer
       v-model="drawer"
       fixed
-      dark
       permanent
+      dark
       app
     >
       <v-list dense>
-        <v-list-tile avatar tag="div">
+        <v-list-tile avatar>
           <v-list-tile-avatar>
-            <v-icon class="blue white--text">directions_run</v-icon>
+            <v-icon>directions_run</v-icon>
           </v-list-tile-avatar>
 
           <v-list-tile-content>
             <v-list-tile-title>Shop One</v-list-tile-title>
           </v-list-tile-content>
-
-          <v-list-tile-action>
-            <v-btn icon @click.stop="drawer = null">
-              <v-icon>chevron_left</v-icon>
-            </v-btn>
-          </v-list-tile-action>
         </v-list-tile>
       </v-list>
 
-      <v-list>
+      <v-list dense>
         <v-divider light></v-divider>
 
-        <v-list-tile
+        <v-list-group
           v-for="item in items"
           :key="item.title"
-          :to="item.path"
-          @click="drawer = null"
-        >
-          <v-list-tile-action>
-            <v-icon>{{ item.icon }}</v-icon>
-          </v-list-tile-action>
+          value="true"
+          ripple
+          >
+          <v-list-tile slot="activator">
+            <v-list-tile-title>{{ $t(item.title) }}</v-list-tile-title>
+          </v-list-tile>
 
-          <v-list-tile-content>
-            <v-list-tile-title>
-              {{ $t(item.title) }}
-            </v-list-tile-title>
-          </v-list-tile-content>
-        </v-list-tile>
+          <v-list-tile
+            v-for="action in actions"
+            :key="action"
+            :to="{ name: `${item.name}.${action}` }"
+            ripple
+            exact
+            >
+            {{ action }}
+          </v-list-tile>
+        </v-list-group>
       </v-list>
     </v-navigation-drawer>
-    <v-toolbar app>
-      <v-toolbar-items>
-        <v-btn flat>Index</v-btn>
-        <v-btn flat>Create</v-btn>
-      </v-toolbar-items>
+    <v-toolbar
+      app
+      dark
+      flat
+    >
       <v-spacer/>
       <v-toolbar-title>Application</v-toolbar-title>
     </v-toolbar>
@@ -72,16 +70,15 @@ export default {
     drawer: null,
     items: [
       {
-        title: "publisher.publisher",
-        icon: "dashboard",
-        path: PublisherRoutes[0].path
+        name: "publisher",
+        title: "publisher.publisher"
       },
       {
-        title: "product.product",
-        icon: "dashboard",
-        path: ProductRoutes[0].path
+        name: "product",
+        title: "product.product"
       }
-    ]
+    ],
+    actions: ["create", "index"]
   }),
   props: {
     source: String
