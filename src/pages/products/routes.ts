@@ -1,5 +1,6 @@
 import { default as Product } from '@/pages/products/_Product.vue'
 import { default as ProductIndex } from '@/pages/products/Index.vue'
+import { default as ProductCreate } from '@/pages/products/Create.vue'
 
 export default [
   {
@@ -9,11 +10,12 @@ export default [
       {
         component: ProductIndex,
         name: 'product.indexes',
-        path: ''
+        path: '',
       },
       {
-        path: '/detail/:id',
-        name: 'product.detail'
+        component: ProductCreate,
+        name: 'product.create',
+        path: 'create',
       }
     ]
   }

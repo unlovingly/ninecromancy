@@ -20,6 +20,7 @@
   >
     <template slot="items" slot-scope="props">
       <td>{{ props.item.name }}</td>
+      <td>{{ props.item.publisherId }}</td>
     </template>
     <template slot="no-data">
       <v-alert :value="true" color="warning" icon="priority_high" outline>
@@ -37,13 +38,20 @@
 
 <script lang="ts">
 import Vue from "vue";
+import { mapState } from "vuex";
+
 export default Vue.extend({
   data() {
     return {
-      headers: [{ text: "名前", value: "name" }],
-      products: [{ name: "Product One" }, { name: "Product Two" }],
+      headers: [
+        { text: "名前", value: "name" },
+        { text: "Publisher", value: "publisherId" }
+      ],
       search: ""
     };
+  },
+  computed: {
+    ...mapState("productModule", ["products"])
   }
 });
 </script>
