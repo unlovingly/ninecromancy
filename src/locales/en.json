@@ -1,7 +1,11 @@
 {
-  "message": "hello i18n !!",
   "name": "Name",
+  "product": {
+    "product": "Product",
+    "name": "Name"
+  },
   "publisher": {
-    "name": "Publisher"
+    "publisher": "Publisher",
+    "name": "Name"
   }
 }

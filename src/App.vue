@@ -25,12 +25,13 @@
         </v-list-tile>
       </v-list>
 
-      <v-list class="pt-0" dense>
+      <v-list>
         <v-divider light></v-divider>
 
         <v-list-tile
           v-for="item in items"
           :key="item.title"
+          :to="item.path"
           @click="drawer = null"
         >
           <v-list-tile-action>
@@ -39,9 +40,7 @@
 
           <v-list-tile-content>
             <v-list-tile-title>
-              <router-link :to="item.path">
-              {{ item.title }}
-              </router-link>
+              {{ $t(item.title) }}
             </v-list-tile-title>
           </v-list-tile-content>
         </v-list-tile>
@@ -72,9 +71,16 @@ export default {
   data: () => ({
     drawer: null,
     items: [
-      { title: "Publisher", icon: "dashboard", path: PublisherRoutes[0].path },
-      { title: "Product", icon: "dashboard", path: ProductRoutes[0].path },
-      { title: "Home", icon: "dashboard", path: "" }
+      {
+        title: "publisher.publisher",
+        icon: "dashboard",
+        path: PublisherRoutes[0].path
+      },
+      {
+        title: "product.product",
+        icon: "dashboard",
+        path: ProductRoutes[0].path
+      }
     ]
   }),
   props: {

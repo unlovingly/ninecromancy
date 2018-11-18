@@ -1,7 +1,7 @@
 <template>
   <v-card>
     <v-card-title>
-      商品情報
+      {{ $t('product.product') }}
       <v-spacer></v-spacer>
       <v-text-field
         v-model="search"
@@ -44,8 +44,8 @@ export default Vue.extend({
   data() {
     return {
       headers: [
-        { text: "名前", value: "name" },
-        { text: "Publisher", value: "publisherId" }
+        { text: this.$t("product.name"), value: "name" },
+        { text: this.$t("publisher.name"), value: "publisherId" }
       ],
       search: ""
     };
