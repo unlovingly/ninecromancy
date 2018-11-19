@@ -3,7 +3,6 @@
     "create": "登録",
     "index": "一覧"
   },
-  "name": "名前",
   "product": {
     "product": "商品情報",
     "name": "商品名"
@@ -11,6 +10,10 @@
   "publisher": {
     "publisher": "販売者",
     "name": "販売者名"
+  },
+  "shop": {
+    "name": "店舗名",
+    "shop": "店舗"
   },
   "slip": {
     "amount": "個数",

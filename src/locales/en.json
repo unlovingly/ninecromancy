@@ -1,9 +1,8 @@
 {
   "actions": {
     "create": "Create",
-    "index": "Lists"
+    "index": "List"
   },
-  "name": "Name",
   "product": {
     "product": "Product",
     "name": "Name"
@@ -11,6 +10,10 @@
   "publisher": {
     "publisher": "Publisher",
     "name": "Name"
+  },
+  "shop": {
+    "name": "Name",
+    "shop": "Shop"
   },
   "slip": {
     "amount": "Amount",

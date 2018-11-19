@@ -14,7 +14,7 @@ export default [
       },
       {
         component: SalesSlipCreator,
-        path: 'index',
+        path: '',
         name: 'slip.index'
       },
     ]

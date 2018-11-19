@@ -1,7 +1,7 @@
 <template>
   <v-card>
     <v-card-title>
-      {{ $t('publisher.shop') }}
+      {{ $t('shop.shop') }}
       <v-spacer></v-spacer>
       <v-text-field
         v-model="search"
@@ -11,7 +11,7 @@
         hide-details
       ></v-text-field>
     </v-card-title>
-    <v-data-table :headers="headers" :items="publishers" :search="search">
+    <v-data-table :headers="headers" :items="shops" :search="search">
       <template slot="items" slot-scope="props">
         <td>{{ props.item.name }}</td>
       </template>
@@ -37,12 +37,12 @@ import { mapState } from "vuex";
 export default Vue.extend({
   data() {
     return {
-      headers: [{ text: this.$t("publisher.name"), value: "name" }],
+      headers: [{ text: this.$t("shop.name"), value: "name" }],
       search: ""
     };
   },
   computed: {
-    ...mapState("publisherModule", ["publishers"])
+    ...mapState("shopModule", ["shops"])
   }
 });
 </script>
