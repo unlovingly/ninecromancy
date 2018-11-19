@@ -1,4 +1,8 @@
 {
+  "actions": {
+    "create": "登録",
+    "index": "一覧"
+  },
   "name": "名前",
   "product": {
     "product": "商品情報",
@@ -7,5 +11,15 @@
   "publisher": {
     "publisher": "販売者",
     "name": "販売者名"
+  },
+  "slip": {
+    "amount": "個数",
+    "approvedAt": "処理日",
+    "description": "備考",
+    "number": "伝票番号",
+    "publishedAt": "発行日",
+    "sales": "売上",
+    "slip": "伝票",
+    "storing": "入庫"
   }
 }

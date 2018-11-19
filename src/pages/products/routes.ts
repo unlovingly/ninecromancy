@@ -1,4 +1,4 @@
-import { default as Product } from '@/pages/products/_Product.vue'
+import { default as Product } from '@/pages/Page.vue'
 import { default as ProductIndex } from '@/pages/products/Index.vue'
 import { default as ProductCreate } from '@/pages/products/Create.vue'
 

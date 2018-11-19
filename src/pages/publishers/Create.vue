@@ -2,7 +2,7 @@
   <v-form ref="form">
     <v-text-field
       v-model="name"
-      label="Name"
+      :label="$t('name')"
       required
     ></v-text-field>
 

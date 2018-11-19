@@ -1,8 +1,8 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import i18n from '@/plugins/i18n'
-import { default as PublisherRoutes } from '@/pages/publishers/routes'
 import { default as ProductRoutes } from '@/pages/products/routes'
+import { default as PublisherRoutes } from '@/pages/publishers/routes'
+import { default as SlipRoutes } from '@/pages/slips/routes'
 
 Vue.use(Router)
 
@@ -12,6 +12,7 @@ const router = new Router({
   routes: [
     ...PublisherRoutes,
     ...ProductRoutes,
+    ...SlipRoutes,
   ]
 });
 

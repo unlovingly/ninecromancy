@@ -1,4 +1,8 @@
 {
+  "actions": {
+    "create": "Create",
+    "index": "Lists"
+  },
   "name": "Name",
   "product": {
     "product": "Product",
@@ -7,5 +11,15 @@
   "publisher": {
     "publisher": "Publisher",
     "name": "Name"
+  },
+  "slip": {
+    "amount": "Amount",
+    "approvedAt": "Approved At",
+    "description": "Description",
+    "number": "Slip Number",
+    "publishedAt": "Published At",
+    "sales": "Sales",
+    "slip": "Slip",
+    "storing": "Storing"
   }
 }
