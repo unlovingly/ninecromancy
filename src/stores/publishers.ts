@@ -7,22 +7,24 @@ import {
 } from 'vuex';
 import { Publisher } from '@/models/Publisher';
 
+const origin = 'http://localhost:9000'
+const api = origin + '/publishers/'
+
 interface State {
   publishers: Array<Publisher>;
 }
 
 const state: State = {
-  publishers: [
-    { id: "00001", name: "Publisher One" },
-    { id: "00002", name: "Publisher Two" },
-  ]
+  publishers: []
 }
 
 const actions = <ActionTree<State, Publisher>>{
   retrieve(store: ActionContext<State, Publisher>) {
-    axios('')
+    axios.get(api + 'index')
       .then((r) => {
-        store.commit('retrieve', r.data)
+        r.data.forEach((p: Publisher) => {
+          store.commit('store', p)
+        });
       })
   },
 
@@ -32,10 +34,6 @@ const actions = <ActionTree<State, Publisher>>{
 }
 
 const mutations = <MutationTree<State>>{
-  retrieve(state: State, payload: Publisher) {
-    state.publishers.push(payload)
-  },
-
   store(state: State, payload: Publisher) {
     state.publishers.push(payload)
   },

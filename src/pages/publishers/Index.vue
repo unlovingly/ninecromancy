@@ -1,7 +1,7 @@
 <template>
   <v-card>
     <v-card-title>
-      {{ $t('publisher.shop') }}
+      {{ $t('publisher.name') }}
       <v-spacer></v-spacer>
       <v-text-field
         v-model="search"
@@ -43,6 +43,9 @@ export default Vue.extend({
   },
   computed: {
     ...mapState("publisherModule", ["publishers"])
+  },
+  mounted() {
+    this.$store.dispatch("publisherModule/retrieve");
   }
 });
 </script>
