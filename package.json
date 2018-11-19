@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "axios": "^0.18.0",
+    "moment": "^2.22.2",
     "ramda": "^0.26.0",
     "vue": "^2.5.17",
     "vue-class-component": "^6.0.0",
