@@ -7,35 +7,33 @@ import {
 } from 'vuex';
 import { Product } from '@/models/Product';
 
+const api = 'http://localhost:9000/products/'
+
 interface State {
   products: Array<Product>;
 }
 
 const state: State = {
-  products: [
-    { id: "00001", name: "Product One", publisherId: "00001" },
-    { id: "00002", name: "Product Two", publisherId: "00001" },
-  ]
+  products: []
 }
 
 const actions = <ActionTree<State, Product>>{
   retrieve(store: ActionContext<State, Product>) {
-    axios('')
+    axios.get(api + 'index')
       .then((r) => {
-        store.commit('retrieve', r.data)
+        store.commit('initialize', r.data)
       })
   },
 
   create(store: ActionContext<State, Product>, product: Product) {
-    store.commit('retrieve', product)
+    store.commit('store', product)
   },
 }
 
 const mutations = <MutationTree<State>>{
-  retrieve(state: State, payload: Product) {
-    state.products.push(payload)
+  initialize(state: State, payload: Array<Product>) {
+    state.products = payload
   },
-
   store(state: State, payload: Product) {
     state.products.push(payload)
   },

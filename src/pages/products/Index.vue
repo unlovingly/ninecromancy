@@ -14,7 +14,7 @@
     <v-data-table :headers="headers" :items="products" :search="search">
       <template slot="items" slot-scope="props">
         <td>{{ props.item.name }}</td>
-        <td>{{ publisher(props.item.publisherId)[0].name }}</td>
+        <td>{{ props.item.publisherId }}</td>
       </template>
       <template slot="no-data">
         <v-alert
@@ -36,6 +36,7 @@ import * as R from "ramda";
 import Vue from "vue";
 import { mapState } from "vuex";
 import { Publisher } from "@/models/Publisher";
+import { Product } from "@/models/Product";
 
 export default Vue.extend({
   data() {
@@ -49,12 +50,20 @@ export default Vue.extend({
   },
   computed: {
     ...mapState("productModule", ["products"]),
-    ...mapState("publisherModule", ["publishers"])
-  },
-  methods: {
-    publisher(id: string) {
-      return R.filter((p: Publisher) => p.id === id, this.publishers);
+    ...mapState("publisherModule", ["publishers"]),
+    publisher: function() {
+      return this.$store.state.publishers.filter((p: Publisher) => p.id === "");
+    },
+    ps: function() {
+      return R.map((p: Product) => {
+        p;
+      }, this.$store.state.products);
     }
+  },
+  mounted() {
+    this.$store.dispatch("productModule/retrieve").then(() => {
+      this.$store.dispatch("publisherModule/retrieve");
+    });
   }
 });
 </script>
