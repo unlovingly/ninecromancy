@@ -1,14 +1,15 @@
-import { Product } from '@/models/Product';
 import { Item } from '@/models/slip/Item';
 
 export class Slip {
   constructor(
-    public id: string = "",
-    public description: string,
-    public publisherId: string,
+    public identity: string = "",
+    public number: string,
+    // public description: string,
+    public senderId: string,
+    public receiverId: string,
     public approvedAt: Date = new Date(),
     public publishedAt: Date,
-    public products: Array<Item>,
+    public items: Array<Item>,
   ) {
   }
 }

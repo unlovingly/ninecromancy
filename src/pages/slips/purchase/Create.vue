@@ -16,7 +16,7 @@
             :label="$t('publisher.name')"
             item-text="name"
             item-value="id"
-            v-model="slip.publisherId"
+            v-model="slip.senderId"
             required
           />
         </v-flex>
@@ -35,7 +35,7 @@
           <v-menu full-width>
             <v-text-field
               slot="activator"
-              :value="publishedAt"
+              :value="slip.publishedAt"
               :label="$t('slip.publishedAt')"
               readonly
             ></v-text-field>
@@ -46,7 +46,7 @@
           <v-menu full-width>
             <v-text-field
               slot="activator"
-              :value="approvedAt"
+              :value="slip.approvedAt"
               :label="$t('slip.approvedAt')"
               readonly
             ></v-text-field>
@@ -55,15 +55,25 @@
         </v-flex>
       </v-layout>
       <page-sub-header>{{ $t('product.product') }}</page-sub-header>
-      <v-layout row v-for="(purchase, index) in purchases" :key="index">
-        <v-flex xs10>
+      <v-layout row v-for="(purchase, index) in slip.items" :key="index">
+        <v-flex xs8>
           <v-autocomplete
             :items="products"
             :label="$t('product.name')"
-            v-model="purchase.id"
+            v-model="purchase.productId"
             item-text="name"
             item-value="id"
             required
+          />
+        </v-flex>
+        <v-flex xs2>
+          <v-text-field
+            single-line
+            v-model.number="purchase.price"
+            type="number"
+            required
+            :label="$t('slip.price')"
+            @keyup.enter="morePurchase"
           />
         </v-flex>
         <v-flex xs2>
@@ -80,7 +90,7 @@
       <v-btn fixed bottom dark fab right @click="morePurchase">
         <v-icon>add</v-icon>
       </v-btn>
-      <v-btn @click="storing(slip, purchases)">submit</v-btn>
+      <v-btn @click="storing">submit</v-btn>
     </v-container>
   </v-form>
 </template>
@@ -105,30 +115,34 @@ export default Vue.extend({
       slip: {
         description: "",
         number: "",
-        publisherId: "",
+        senderId: "",
+        receiverId: "00000000-0000-0000-0000-000000000000",
         publishedAt: new Date().toISOString().substr(0, 10),
-        approvedAt: new Date().toISOString().substr(0, 10)
-      },
-      purchases: [{ id: "", amount: 0 }]
+        approvedAt: new Date().toISOString().substr(0, 10),
+        items: [{ productId: "", amount: 0, price: 0 }]
+      }
     };
   },
   computed: {
     ...mapState("productModule", ["products"]),
-    ...mapState("publisherModule", ["publishers"]),
-    approvedAt: function() {
-      return moment(this.slip.approvedAt).format("Y/MM/DD");
-    },
-    publishedAt: function() {
-      return moment(this.slip.publishedAt).format("Y/MM/DD");
-    }
+    ...mapState("publisherModule", ["publishers"])
   },
   methods: {
     morePurchase() {
-      this.purchases.push({ id: "", amount: 0 });
+      this.slip.items.push({ productId: "", amount: 0, price: 0 });
     },
-    storing(s: any, p: any) {
-      console.log(s);
+    storing() {
+      const slip = Object.assign({}, this.slip);
+
+      slip.approvedAt = new Date(slip.approvedAt).toISOString();
+      slip.publishedAt = new Date(slip.publishedAt).toISOString();
+
+      this.$store.dispatch("slipModule/create", slip);
     }
+  },
+  mounted() {
+    this.$store.dispatch("publisherModule/retrieve");
+    this.$store.dispatch("productModule/retrieve");
   }
 });
 </script>

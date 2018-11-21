@@ -7,7 +7,7 @@ import {
 } from 'vuex';
 import { Publisher } from '@/models/Publisher';
 
-const api = 'http://localhost:9000/publishers/'
+const api = 'http://localhost:9000/publishers'
 
 interface State {
   publishers: Array<Publisher>;
@@ -17,15 +17,15 @@ const state: State = {
   publishers: []
 }
 
-const actions = <ActionTree<State, Publisher>>{
-  retrieve(store: ActionContext<State, Publisher>) {
-    axios.get(api + 'index')
+const actions = <ActionTree<State, any>>{
+  retrieve(store: ActionContext<State, any>) {
+    axios.get(api)
       .then((r) => {
         store.commit('initialize', r.data)
       })
   },
 
-  create(store: ActionContext<State, Publisher>, publisher: Publisher) {
+  create(store: ActionContext<State, any>, publisher: Publisher) {
     store.commit('store', publisher);
   },
 }

@@ -7,7 +7,7 @@ import {
 } from 'vuex';
 import { Product } from '@/models/Product';
 
-const api = 'http://localhost:9000/products/'
+const api = 'http://localhost:9000/products'
 
 interface State {
   products: Array<Product>;
@@ -17,16 +17,19 @@ const state: State = {
   products: []
 }
 
-const actions = <ActionTree<State, Product>>{
-  retrieve(store: ActionContext<State, Product>) {
-    axios.get(api + 'index')
+const actions = <ActionTree<State, any>>{
+  retrieve(store: ActionContext<State, any>) {
+    axios.get(api)
       .then((r) => {
         store.commit('initialize', r.data)
       })
   },
 
-  create(store: ActionContext<State, Product>, product: Product) {
-    store.commit('store', product)
+  create(store: ActionContext<State, any>, product: Product) {
+    axios.post(api, product)
+      .then((r) => {
+        store.commit('store', r.data)
+      })
   },
 }
 

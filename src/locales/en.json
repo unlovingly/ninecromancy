@@ -20,8 +20,11 @@
     "approvedAt": "Approved At",
     "description": "Description",
     "number": "Slip Number",
+    "price": "Price",
     "publishedAt": "Published At",
+    "receiverId": "Receiver ID",
     "sales": "Sales",
+    "senderId": "Sender ID",
     "slip": "Slip",
     "storing": "Storing"
   }

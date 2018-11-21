@@ -1,6 +1,7 @@
 import { default as Slip } from '@/pages/Page.vue'
-import { default as PurchaseSlipCreator } from '@/pages/slips/PurchaseSlip.vue'
-import { default as SalesSlipCreator } from '@/pages/slips/SalesSlip.vue'
+import { default as PurchaseSlipTweeter } from '@/pages/slips/purchase/Index.vue'
+import { default as PurchaseSlipCreator } from '@/pages/slips/purchase/Create.vue'
+import { default as PurchaseSlipDetail } from '@/pages/slips/purchase/Detail.vue'
 
 export default [
   {
@@ -13,9 +14,14 @@ export default [
         name: 'slip.create'
       },
       {
-        component: SalesSlipCreator,
+        component: PurchaseSlipTweeter,
         path: '',
         name: 'slip.index'
+      },
+      {
+        component: PurchaseSlipDetail,
+        path: ':id',
+        name: 'slip.detail'
       },
     ]
   }

@@ -20,8 +20,11 @@
     "approvedAt": "処理日",
     "description": "備考",
     "number": "伝票番号",
+    "price": "Price",
     "publishedAt": "発行日",
+    "receiverId": "Receiver ID",
     "sales": "売上",
+    "senderId": "Sender ID",
     "slip": "伝票",
     "storing": "入庫"
   }
