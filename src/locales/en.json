@@ -13,7 +13,13 @@
   },
   "shop": {
     "name": "Name",
-    "shop": "Shop"
+    "shop": "Shop",
+    "stocks": {
+      "amount": "Amount",
+      "pluCode": "PLU Code",
+      "price": "Price",
+      "stocks": "Stocks"
+    }
   },
   "slip": {
     "amount": "Amount",

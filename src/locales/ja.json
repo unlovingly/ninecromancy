@@ -13,7 +13,13 @@
   },
   "shop": {
     "name": "店舗名",
-    "shop": "店舗"
+    "shop": "店舗",
+    "stocks": {
+      "amount": "在庫数",
+      "pluCode": "PLU コード",
+      "price": "単価",
+      "stocks": "店舗在庫"
+    }
   },
   "slip": {
     "amount": "個数",
