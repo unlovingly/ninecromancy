@@ -25,7 +25,7 @@ export default Vue.extend({
 
   methods: {
     create(name: string) {
-      this.$store.dispatch("shopModule/create", new Shop(undefined, name));
+      this.$store.dispatch("shopModule/create", new Shop(undefined, name, []));
     }
   }
 });

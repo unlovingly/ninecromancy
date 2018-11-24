@@ -15,7 +15,7 @@ interface State {
 
 const state: State = {
   shops: [
-    { id: "00001", name: "Shop One" },
+    { id: "00001", name: "Shop One", stocks: [] },
   ]
 }
 
