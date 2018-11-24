@@ -23,7 +23,7 @@ export default Vue.extend({
   computed: {
     ...mapState("slipDetailModule", ["slip"])
   },
-  mounted() {
+  created() {
     this.$store.dispatch("slipDetailModule/detail", this.$route.params.id);
   }
 });

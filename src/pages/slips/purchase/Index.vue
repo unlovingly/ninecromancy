@@ -60,7 +60,7 @@ export default Vue.extend({
   computed: {
     ...mapState("slipModule", ["slips"])
   },
-  mounted() {
+  created() {
     this.$store.dispatch("slipModule/retrieve");
   }
 });

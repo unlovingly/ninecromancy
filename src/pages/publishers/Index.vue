@@ -44,7 +44,7 @@ export default Vue.extend({
   computed: {
     ...mapState("publisherModule", ["publishers"])
   },
-  mounted() {
+  created() {
     this.$store.dispatch("publisherModule/retrieve");
   }
 });

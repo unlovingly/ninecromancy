@@ -140,7 +140,7 @@ export default Vue.extend({
       this.$store.dispatch("slipModule/create", slip);
     }
   },
-  mounted() {
+  created() {
     this.$store.dispatch("publisherModule/retrieve");
     this.$store.dispatch("productModule/retrieve");
   }

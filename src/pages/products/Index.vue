@@ -60,7 +60,7 @@ export default Vue.extend({
       }, this.$store.state.products);
     }
   },
-  mounted() {
+  created() {
     this.$store.dispatch("productModule/retrieve").then(() => {
       this.$store.dispatch("publisherModule/retrieve");
     });
