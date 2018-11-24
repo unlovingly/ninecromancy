@@ -23,12 +23,12 @@
             <v-list-tile-title>{{ $t(item.title) }}</v-list-tile-title>
           </v-list-tile>
           <v-list-tile
-            v-for="action in actions"
+            v-for="(action, legend) in item.actions"
             :key="action"
-            :to="{ name: `${item.name}.${action}` }"
+            :to="{ name: action }"
             ripple
             exact
-          >{{ $t(`actions.${action}`) }}</v-list-tile>
+          >{{ $t(legend) }}</v-list-tile>
         </v-list-group>
       </v-list>
     </v-navigation-drawer>
@@ -50,23 +50,39 @@ export default {
     drawer: null,
     items: [
       {
+        actions: {
+          "actions.create": "product.create",
+          "actions.index": "product.index"
+        },
         name: "product",
         title: "product.product"
       },
       {
+        actions: {
+          "actions.create": "publisher.create",
+          "actions.index": "publisher.index"
+        },
         name: "publisher",
         title: "publisher.publisher"
       },
       {
+        actions: {
+          "actions.create": "shop.create",
+          "actions.index": "shop.index",
+          "shop.stocks.stocks": "shop.stocks"
+        },
         name: "shop",
         title: "shop.shop"
       },
       {
+        actions: {
+          "actions.create": "slip.create",
+          "actions.index": "slip.index"
+        },
         name: "slip",
         title: "slip.slip"
       }
-    ],
-    actions: ["create", "index"]
+    ]
   }),
   props: {
     source: String
