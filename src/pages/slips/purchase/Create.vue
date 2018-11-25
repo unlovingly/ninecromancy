@@ -64,11 +64,11 @@
             item-text="name"
             item-value="id"
             required
+            autofocus
           />
         </v-flex>
         <v-flex xs2>
           <v-text-field
-            single-line
             v-model.number="purchase.price"
             type="number"
             required
@@ -78,7 +78,6 @@
         </v-flex>
         <v-flex xs2>
           <v-text-field
-            single-line
             v-model.number="purchase.amount"
             type="number"
             required
