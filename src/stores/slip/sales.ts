@@ -5,9 +5,9 @@ import {
   ModuleTree,
   MutationTree
 } from 'vuex';
-import { Slip } from '@/models/slip/Purchase';
+import { Slip } from '@/models/slip/Sales';
 
-const api = 'http://localhost:9000/slips'
+const api = 'http://localhost:9000/slips/'
 
 interface State {
   slip: Slip
@@ -16,8 +16,6 @@ interface State {
 const state: State = {
   slip: {
     identity: "",
-    number: "",
-    description: "",
     senderId: "",
     receiverId: "",
     items: [],
@@ -28,14 +26,14 @@ const state: State = {
 
 const actions = <ActionTree<State, any>>{
   retrieve(store: ActionContext<State, any>, id: String) {
-    axios.get(`${api}/detail/${id}`)
+    axios.get(`${api}/sales`)
       .then((r) => {
         store.commit('store', r.data)
       })
   },
 
   create(store: ActionContext<State, any>, slip: Slip) {
-    axios.post(`${api}/storing`, slip)
+    axios.post(api, slip)
       .then((r) => {
         store.commit('store', r.data)
       })
@@ -48,7 +46,7 @@ const mutations = <MutationTree<State>>{
   },
 }
 
-export const purchase = {
+export const sales = {
   namespaced: true,
   actions: actions,
   state: state,

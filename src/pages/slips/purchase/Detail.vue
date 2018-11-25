@@ -21,10 +21,10 @@ export default Vue.extend({
     };
   },
   computed: {
-    ...mapState("slipDetailModule", ["slip"])
+    ...mapState("slipModule/purchase", ["slip"])
   },
   created() {
-    this.$store.dispatch("slipDetailModule/detail", this.$route.params.id);
+    this.$store.dispatch("slipModule/purchase/retrieve", this.$route.params.id);
   }
 });
 </script>

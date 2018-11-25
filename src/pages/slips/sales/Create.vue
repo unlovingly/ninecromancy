@@ -1,7 +1,7 @@
 <template>
   <v-form ref="form">
     <v-container>
-      <page-header>{{ $t('slip.storing') }}</page-header>
+      <page-header>{{ $t('slip.sales') }}</page-header>
       <v-layout>
         <v-flex xs6>
           <v-text-field
