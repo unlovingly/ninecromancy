@@ -76,7 +76,8 @@ export default {
       },
       {
         actions: {
-          "actions.create": "slip.storing",
+          "slip.storing": "slip.storing",
+          "slip.sales": "slip.sell",
           "actions.index": "slip.index"
         },
         name: "slip",

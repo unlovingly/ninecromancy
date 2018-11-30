@@ -3,35 +3,7 @@
     <v-container>
       <page-header>{{ $t('slip.sales') }}</page-header>
       <v-layout>
-        <v-flex xs6>
-          <v-text-field
-            :label="$t('slip.number')"
-            v-model="slip.number"
-            required
-          ></v-text-field>
-        </v-flex>
-        <v-flex xs6>
-          <v-autocomplete
-            :items="publishers"
-            :label="$t('publisher.name')"
-            item-text="name"
-            item-value="id"
-            v-model="slip.senderId"
-            required
-          />
-        </v-flex>
-      </v-layout>
-      <v-layout>
         <v-flex>
-          <v-text-field
-            v-model="slip.description"
-            :label="$t('slip.description')"
-            required
-          ></v-text-field>
-        </v-flex>
-      </v-layout>
-      <v-layout>
-        <v-flex xs6>
           <v-menu full-width>
             <v-text-field
               slot="activator"
@@ -42,28 +14,23 @@
             <v-date-picker v-model="slip.publishedAt" landscape scrollable></v-date-picker>
           </v-menu>
         </v-flex>
-        <v-flex xs6>
-          <v-menu full-width>
-            <v-text-field
-              slot="activator"
-              :value="slip.approvedAt"
-              :label="$t('slip.approvedAt')"
-              readonly
-            ></v-text-field>
-            <v-date-picker v-model="slip.approvedAt" landscape scrollable></v-date-picker>
-          </v-menu>
-        </v-flex>
       </v-layout>
       <page-sub-header>{{ $t('product.product') }}</page-sub-header>
       <v-layout row v-for="(purchase, index) in slip.items" :key="index">
-        <v-flex xs8>
-          <v-autocomplete
-            :items="products"
+        <v-flex xs2>
+          <v-text-field
+            v-model="purchase.input"
+            required
+            label="PLU Code"
+            @keyup.enter="browse(purchase)"
+          />
+        </v-flex>
+        <v-flex xs6>
+          <v-text-field
             :label="$t('product.name')"
             v-model="purchase.productId"
-            item-text="name"
-            item-value="id"
             required
+            readonly
             autofocus
           />
         </v-flex>
@@ -118,7 +85,7 @@ export default Vue.extend({
         receiverId: "00000000-0000-0000-0000-000000000000",
         publishedAt: new Date().toISOString().substr(0, 10),
         approvedAt: new Date().toISOString().substr(0, 10),
-        items: [{ productId: "", amount: 0, price: 0 }]
+        items: [{ input: "", productId: "", amount: 0, price: 0 }]
       }
     };
   },
@@ -127,8 +94,20 @@ export default Vue.extend({
     ...mapState("publisherModule", ["publishers"])
   },
   methods: {
+    browse(purchase: any) {
+      const code = purchase.input;
+
+      this.$store.dispatch("shopModule/browse", code).then(() => {
+        const stock = this.$store.getters["shopModule/browser"](
+          "00000000-0000-0000-0000-000000000000",
+          code
+        );
+
+        purchase.productId = stock.productId;
+      });
+    },
     morePurchase() {
-      this.slip.items.push({ productId: "", amount: 0, price: 0 });
+      this.slip.items.push({ input: "", productId: "", amount: 0, price: 0 });
     },
     storing() {
       const slip = Object.assign({}, this.slip);

@@ -7,7 +7,7 @@ import {
 } from 'vuex';
 import { Slip } from '@/models/slip/Sales';
 
-const api = 'http://localhost:9000/slips/'
+const api = 'http://localhost:9000/slips/sales'
 
 interface State {
   slip: Slip
@@ -25,8 +25,8 @@ const state: State = {
 }
 
 const actions = <ActionTree<State, any>>{
-  retrieve(store: ActionContext<State, any>, id: String) {
-    axios.get(`${api}/sales`)
+  retrieve(store: ActionContext<State, any>) {
+    axios.get(`${api}`)
       .then((r) => {
         store.commit('store', r.data)
       })
