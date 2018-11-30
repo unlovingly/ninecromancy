@@ -1,4 +1,5 @@
 import axios from 'axios';
+import Vue from 'vue'
 import {
   ActionContext,
   ActionTree,
@@ -35,7 +36,7 @@ const actions = <ActionTree<State, any>>{
 
 const mutations = <MutationTree<State>>{
   initialize(state: State, payload: Array<Product>) {
-    state.products = payload
+    Vue.set(state, 'products', payload)
   },
   store(state: State, payload: Product) {
     state.products.push(payload)

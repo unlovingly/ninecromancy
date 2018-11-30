@@ -58,10 +58,10 @@ export default Vue.extend({
     };
   },
   computed: {
-    ...mapState("slipModule", ["slips"])
+    ...mapState("slipModule/purchase", ["slips"])
   },
   created() {
-    this.$store.dispatch("slipModule/retrieve");
+    this.$store.dispatch("slipModule/purchase/retrieve");
   }
 });
 </script>

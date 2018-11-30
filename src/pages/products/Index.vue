@@ -50,15 +50,7 @@ export default Vue.extend({
   },
   computed: {
     ...mapState("productModule", ["products"]),
-    ...mapState("publisherModule", ["publishers"]),
-    publisher: function() {
-      return this.$store.state.publishers.filter((p: Publisher) => p.id === "");
-    },
-    ps: function() {
-      return R.map((p: Product) => {
-        p;
-      }, this.$store.state.products);
-    }
+    ...mapState("publisherModule", ["publishers"])
   },
   created() {
     this.$store.dispatch("productModule/retrieve").then(() => {
