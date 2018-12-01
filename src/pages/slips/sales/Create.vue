@@ -81,8 +81,7 @@ export default Vue.extend({
       slip: {
         description: "",
         number: "",
-        senderId: "",
-        receiverId: "00000000-0000-0000-0000-000000000000",
+        senderId: "00000000-0000-0000-0000-000000000000",
         publishedAt: new Date().toISOString().substr(0, 10),
         approvedAt: new Date().toISOString().substr(0, 10),
         items: [{ input: "", productId: "", amount: 0, price: 0 }]
@@ -115,7 +114,7 @@ export default Vue.extend({
       slip.approvedAt = new Date(slip.approvedAt).toISOString();
       slip.publishedAt = new Date(slip.publishedAt).toISOString();
 
-      this.$store.dispatch("slipModule/purchase/create", slip);
+      this.$store.dispatch("slipModule/sales/create", slip);
     }
   },
   created() {
