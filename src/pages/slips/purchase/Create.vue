@@ -96,7 +96,6 @@
 
 <script lang="ts">
 import moment from "moment";
-import * as R from "ramda";
 import Vue from "vue";
 import { mapState } from "vuex";
 import PageHeader from "@/components/PageHeader.vue";
@@ -136,7 +135,9 @@ export default Vue.extend({
       slip.approvedAt = new Date(slip.approvedAt).toISOString();
       slip.publishedAt = new Date(slip.publishedAt).toISOString();
 
-      this.$store.dispatch("slipModule/purchase/create", slip);
+      this.$store.dispatch("slipModule/purchase/create", slip).then(id => {
+        this.$router.push({ name: "slip.sales.detail", params: { id: id } });
+      });
     }
   },
   created() {

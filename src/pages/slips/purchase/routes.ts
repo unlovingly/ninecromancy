@@ -7,7 +7,7 @@ import { default as PurchaseSlipDetail } from '@/pages/slips/purchase/Detail.vue
 export default [
   {
     component: Slip,
-    path: '/purchase',
+    path: 'purchase',
     children: [
       {
         component: PurchaseSlipCreator,

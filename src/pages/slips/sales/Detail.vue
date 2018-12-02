@@ -1,5 +1,5 @@
 <template>
-  <v-container grid-list-md>
+  <v-container grid-list-md v-if="showing">
     <v-layout row>
       <v-flex>
         <v-card flat>
@@ -26,10 +26,10 @@
       </v-flex>
     </v-layout>
   </v-container>
+  <v-container v-else>not found</v-container>
 </template>
 
 <script lang="ts">
-import * as S from "sanctuary";
 import Vue from "vue";
 import { mapGetters, mapState } from "vuex";
 import { Slip } from "@/models/slip/Purchase";
@@ -52,12 +52,9 @@ export default Vue.extend({
     };
   },
   computed: {
-    ...mapState("slipModule/purchase", ["slips"]),
+    ...mapState("slipModule/sales", ["slips"]),
     showing(): Slip {
-      const show = S.fromMaybe({})(
-        this.$store.getters["slipModule/sales/show"](this.id)
-      );
-      return show;
+      return this.$store.getters["slipModule/sales/show"](this.id);
     }
   },
   created() {

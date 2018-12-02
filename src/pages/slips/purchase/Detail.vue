@@ -1,5 +1,5 @@
 <template>
-  <v-container grid-list-md>
+  <v-container grid-list-md v-if="showing">
     <v-layout row>
       <v-flex>
         <v-card flat>
@@ -27,10 +27,10 @@
       </v-flex>
     </v-layout>
   </v-container>
+  <v-container v-else>not found</v-container>
 </template>
 
 <script lang="ts">
-import * as R from "ramda";
 import Vue from "vue";
 import { mapGetters, mapState } from "vuex";
 import { Slip } from "@/models/slip/Purchase";

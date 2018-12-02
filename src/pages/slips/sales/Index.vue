@@ -1,7 +1,7 @@
 <template>
   <v-card>
     <v-card-title>
-      {{ $t('slip.storing') }}
+      {{ $t('slip.sales') }}
       <v-spacer></v-spacer>
       <v-text-field
         v-model="search"
@@ -19,7 +19,7 @@
       <template slot="items" slot-scope="props">
         <router-link
           tag="tr"
-          :to="{ name: 'slip.purchase.detail', params: { id: props.item.identity } }"
+          :to="{ name: 'slip.sales.detail', params: { id: props.item.identity } }"
         >
           <td>{{ props.item.number }}</td>
           <td>{{ props.item.senderId }}</td>
@@ -61,10 +61,10 @@ export default Vue.extend({
     };
   },
   computed: {
-    ...mapState("slipModule/purchase", ["slips"])
+    ...mapState("slipModule/sales", ["slips"])
   },
   created() {
-    this.$store.dispatch("slipModule/purchase/retrieve");
+    this.$store.dispatch("slipModule/sales/retrieve");
   }
 });
 </script>
