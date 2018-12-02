@@ -1,6 +1,6 @@
 <template>
   <v-app>
-    <v-navigation-drawer v-model="drawer" fixed permanent dark app>
+    <v-navigation-drawer fixed permanent app>
       <v-list dense>
         <v-list-tile avatar>
           <v-list-tile-avatar>
@@ -12,24 +12,13 @@
         </v-list-tile>
       </v-list>
       <v-list dense>
-        <v-divider light></v-divider>
-        <v-list-group
-          v-for="item in items"
-          :key="item.title"
-          value="true"
-          ripple
-        >
-          <v-list-tile slot="activator">
-            <v-list-tile-title>{{ $t(item.title) }}</v-list-tile-title>
-          </v-list-tile>
-          <v-list-tile
-            v-for="(action, legend) in item.actions"
-            :key="action"
-            :to="{ name: action }"
-            ripple
-            exact
-          >{{ $t(legend) }}</v-list-tile>
-        </v-list-group>
+        <recursive-nav-bar
+          v-for="n in node"
+          :actions="n.actions"
+          :header="n.header"
+          :key="n.header"
+          :node="n.node"
+        ></recursive-nav-bar>
       </v-list>
     </v-navigation-drawer>
     <v-toolbar app dark flat>
@@ -45,42 +34,46 @@
 </template>
 
 <script>
+import RecursiveNavBar from "@/components/RecursiveNavBar.vue";
+
 export default {
+  components: {
+    RecursiveNavBar
+  },
   data: () => ({
-    drawer: null,
-    items: [
+    node: [
       {
         actions: {
           "actions.create": "product.create",
           "actions.index": "product.index"
         },
-        name: "product",
-        title: "product.product"
+        header: "product.product"
       },
       {
         actions: {
           "actions.create": "publisher.create",
           "actions.index": "publisher.index"
         },
-        name: "publisher",
-        title: "publisher.publisher"
+        header: "publisher.publisher"
       },
       {
-        actions: {
-          "actions.create": "shop.create",
-          "actions.index": "shop.index",
-          "shop.stocks.stocks": "shop.stocks"
-        },
-        name: "shop",
-        title: "shop.shop"
-      },
-      {
-        actions: {
-          "slip.storing": "slip.purchase.storing",
-          "slip.sales": "slip.sales.sell"
-        },
-        name: "slip",
-        title: "slip.slip"
+        header: "slip.slip",
+        node: [
+          {
+            actions: {
+              "actions.create": "slip.purchase.storing",
+              "actions.index": "slip.purchase.index"
+            },
+            header: "slip.sales"
+          },
+          {
+            actions: {
+              "actions.create": "slip.sales.sell",
+              "actions.index": "slip.sales.index"
+            },
+            header: "slip.storing"
+          }
+        ]
       }
     ]
   }),
