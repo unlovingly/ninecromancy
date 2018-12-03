@@ -12,7 +12,7 @@
         </v-flex>
         <v-flex xs6>
           <v-autocomplete
-            :items="publishers"
+            :items="Object.values(publishers)"
             :label="$t('publisher.name')"
             item-text="name"
             item-value="id"
@@ -58,7 +58,7 @@
       <v-layout row v-for="(purchase, index) in slip.items" :key="index">
         <v-flex xs8>
           <v-autocomplete
-            :items="products"
+            :items="Object.values(products)"
             :label="$t('product.name')"
             v-model="purchase.productId"
             item-text="name"

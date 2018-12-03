@@ -1,8 +1,8 @@
 import axios from 'axios';
+import Vue from 'vue'
 import {
   ActionContext,
   ActionTree,
-  ModuleTree,
   MutationTree
 } from 'vuex';
 import { Publisher } from '@/models/Publisher';
@@ -10,32 +10,38 @@ import { Publisher } from '@/models/Publisher';
 const api = 'http://localhost:9000/publishers'
 
 interface State {
-  publishers: Array<Publisher>;
+  publishers: {
+    [key: string]: Publisher
+  }
 }
 
 const state: State = {
-  publishers: []
+  publishers: {}
 }
 
 const actions = <ActionTree<State, any>>{
   retrieve(store: ActionContext<State, any>) {
-    axios.get(api)
+    return axios.get(api)
       .then((r) => {
-        store.commit('initialize', r.data)
+        r.data.forEach((publisher: Publisher) => {
+          store.commit('store', publisher)
+        });
       })
   },
 
   create(store: ActionContext<State, any>, publisher: Publisher) {
-    store.commit('store', publisher);
+    return axios.post(api, publisher)
+      .then((r) => {
+        store.commit('store', r.data)
+
+        return r.data.id
+      })
   },
 }
 
 const mutations = <MutationTree<State>>{
-  initialize(state: State, payload: Array<Publisher>) {
-    state.publishers = payload
-  },
   store(state: State, payload: Publisher) {
-    state.publishers.push(payload)
+    Vue.set(state.publishers, payload.id, payload)
   },
 }
 

@@ -16,7 +16,7 @@
       :items="Object.values(slips)"
       :search="search"
     >
-      <template slot="items" slot-scope="props">
+      <template slot="Object.values(items)" slot-scope="props">
         <router-link
           tag="tr"
           :to="{ name: 'slip.sales.detail', params: { id: props.item.identity } }"

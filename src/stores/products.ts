@@ -3,7 +3,6 @@ import Vue from 'vue'
 import {
   ActionContext,
   ActionTree,
-  ModuleTree,
   MutationTree
 } from 'vuex';
 import { Product } from '@/models/Product';
@@ -11,35 +10,38 @@ import { Product } from '@/models/Product';
 const api = 'http://localhost:9000/products'
 
 interface State {
-  products: Array<Product>;
+  products: {
+    [key: string]: Product
+  }
 }
 
 const state: State = {
-  products: []
+  products: {}
 }
 
 const actions = <ActionTree<State, any>>{
-  retrieve(store: ActionContext<State, any>) {
-    axios.get(api)
+  create(store: ActionContext<State, any>, product: Product) {
+    return axios.post(api, product)
       .then((r) => {
-        store.commit('initialize', r.data)
+        store.commit('store', r.data)
+
+        return r.data.id
       })
   },
 
-  create(store: ActionContext<State, any>, product: Product) {
-    axios.post(api, product)
+  retrieve(store: ActionContext<State, any>) {
+    return axios.get(api)
       .then((r) => {
-        store.commit('store', r.data)
+        r.data.forEach((product: Product) => {
+          store.commit('store', product)
+        });
       })
   },
 }
 
 const mutations = <MutationTree<State>>{
-  initialize(state: State, payload: Array<Product>) {
-    Vue.set(state, 'products', payload)
-  },
   store(state: State, payload: Product) {
-    state.products.push(payload)
+    Vue.set(state.products, payload.id, payload)
   },
 }
 

@@ -11,7 +11,7 @@
         hide-details
       ></v-text-field>
     </v-card-title>
-    <v-data-table :headers="headers" :items="products" :search="search">
+    <v-data-table :headers="headers" :items="Object.values(products)" :search="search">
       <template slot="items" slot-scope="props">
         <td>{{ props.item.name }}</td>
         <td>{{ props.item.publisherId }}</td>

@@ -1,38 +1,53 @@
 import axios from 'axios';
-import * as R from 'ramda'
+import Vue from 'vue'
 import {
   ActionContext,
   ActionTree,
   GetterTree,
-  ModuleTree,
   MutationTree
 } from 'vuex';
 import { Shop } from '@/models/Shop';
-import { Stock } from '@/models/Stock';
 
 const api = 'http://localhost:9000/shops'
 
 interface State {
-  shops: Array<Shop>;
+  shops: {
+    [key: string]: Shop
+  }
 }
 
 const state: State = {
-  shops: [
-    { id: "00001", name: "Shop One", stocks: [] },
-  ]
+  shops: {}
 }
 
 const getters = <GetterTree<State, any>>{
   browser(state) {
     return (shopId: string, pluCode: string) => {
-      const shop = state.shops[R.findIndex(R.propEq("id", shopId))(state.shops)]
-      const stock = shop && shop.stocks[R.findIndex(R.propEq("pluCode", pluCode))(shop.stocks)]
+      const shop = state.shops[shopId]
+      const stock = shop && shop.stocks
+
       return stock
     }
   }
 }
 
 const actions = <ActionTree<State, any>>{
+  browse(store: ActionContext<State, any>, pluCode: string) {
+    return axios.get(`${api}/retrieveStockBy/${pluCode}`)
+      .then((r) => {
+        store.commit('store', r.data)
+      })
+  },
+
+  create(store: ActionContext<State, any>, shop: Shop) {
+    return axios.post(api, shop)
+      .then((r) => {
+        store.commit('store', r.data)
+
+        return r.data.id
+      })
+  },
+
   retrieve(store: ActionContext<State, any>) {
     return axios.get(api)
       .then((r) => {
@@ -47,26 +62,11 @@ const actions = <ActionTree<State, any>>{
         store.commit('store', r.data)
       })
   },
-
-  browse(store: ActionContext<State, any>, pluCode: string) {
-    return axios.get(`${api}/retrieveStockBy/${pluCode}`)
-      .then((r) => {
-        store.commit('store', r.data)
-      })
-  },
-
-  create(store: ActionContext<State, any>, shop: Shop) {
-    store.commit('store', shop);
-  },
 }
 
 const mutations = <MutationTree<State>>{
-  retrieve(state: State, payload: Shop) {
-    state.shops.push(payload)
-  },
-
   store(state: State, payload: Shop) {
-    state.shops.push(payload)
+    Vue.set(state.shops, payload.id, payload)
   },
 }
 

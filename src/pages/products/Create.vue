@@ -1,31 +1,21 @@
 <template>
   <v-form>
-    <v-text-field
-      v-model="name"
-      :label="$t('name')"
-      required
-    ></v-text-field>
+    <v-text-field v-model="product.name" :label="$t('product.name')" required></v-text-field>
 
-    <v-combobox
-      v-model="publisher"
+    <v-autocomplete
+      v-model="product.publisherId"
       :items="publishers"
       item-text="name"
-      item-value="id"
       :label="$t('publisher.name')"
+      item-value="id"
       required
     />
 
-    <v-btn
-      :disabled="!valid"
-      @click="create(name, publisher)"
-    >
-      submit
-    </v-btn>
+    <v-btn @click="create">submit</v-btn>
   </v-form>
 </template>
 
 <script lang="ts">
-import * as R from "ramda";
 import Vue from "vue";
 import { mapState } from "vuex";
 import { Publisher } from "@/models/Publisher";
@@ -34,25 +24,24 @@ import { Product } from "@/models/Product";
 export default Vue.extend({
   data() {
     return {
-      name: "",
-      publisher: null
+      product: {
+        name: "",
+        publisherId: ""
+      }
     };
   },
 
   computed: {
-    valid: function() {
-      // TODO
-      return !R.isEmpty(this.name) && !R.isNil(this.publisher);
-    },
     ...mapState("publisherModule", ["publishers"])
+  },
+
+  created() {
+    this.$store.dispatch("publisherModule/retrieve");
   },
 
   methods: {
     create(name: string, publisher: Publisher) {
-      this.$store.dispatch(
-        "productModule/create",
-        new Product(undefined, name, publisher.id)
-      );
+      this.$store.dispatch("productModule/create", this.product);
     }
   }
 });

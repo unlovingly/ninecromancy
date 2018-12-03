@@ -2,13 +2,12 @@ import axios from 'axios';
 import {
   ActionContext,
   ActionTree,
-  ModuleTree,
   MutationTree
 } from 'vuex';
 import { Shop } from '@/models/Shop';
 import { Stock } from '@/models/Stock';
 
-const api = 'http://localhost:9000/shops/stocks'
+const api = 'http://localhost:9000/shops'
 
 interface State {
   stocks: Array<Stock>;
@@ -21,7 +20,7 @@ const state: State = {
 
 const actions = <ActionTree<State, any>>{
   retrieve(store: ActionContext<State, any>, q: string) {
-    axios.get(`${api}/${q}`)
+    axios.get(`${api}/retrieveWithStocksByQuery/${q}`)
       .then((r) => {
         r.data.forEach((s: Shop) => {
           s.stocks.forEach(t => {
