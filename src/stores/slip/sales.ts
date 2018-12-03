@@ -31,7 +31,7 @@ const actions = <ActionTree<State, any>>{
   },
 
   retrieve(store: ActionContext<State, any>) {
-    return axios.get(`${api}`)
+    return axios.get(api)
       .then((r) => {
         r.data.forEach((slip: Slip) => {
           store.commit('store', slip)

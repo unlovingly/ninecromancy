@@ -3,7 +3,6 @@ import Vue from 'vue'
 import {
   ActionContext,
   ActionTree,
-  GetterTree,
   MutationTree
 } from 'vuex';
 import { Shop } from '@/models/Shop';
@@ -20,25 +19,7 @@ const state: State = {
   shops: {}
 }
 
-const getters = <GetterTree<State, any>>{
-  browser(state) {
-    return (shopId: string, pluCode: string) => {
-      const shop = state.shops[shopId]
-      const stock = shop && shop.stocks
-
-      return stock
-    }
-  }
-}
-
 const actions = <ActionTree<State, any>>{
-  browse(store: ActionContext<State, any>, pluCode: string) {
-    return axios.get(`${api}/retrieveStockBy/${pluCode}`)
-      .then((r) => {
-        store.commit('store', r.data)
-      })
-  },
-
   create(store: ActionContext<State, any>, shop: Shop) {
     return axios.post(api, shop)
       .then((r) => {
@@ -56,10 +37,10 @@ const actions = <ActionTree<State, any>>{
   },
 
   show(store: ActionContext<State, any>, id: string) {
-    // TODO distinct
     return axios.get(`${api}/detail/${id}`)
       .then((r) => {
         store.commit('store', r.data)
+        store.commit('store', r.data.stocks, { root: true })
       })
   },
 }
@@ -73,7 +54,6 @@ const mutations = <MutationTree<State>>{
 export const shopModule = {
   namespaced: true,
   actions: actions,
-  getters: getters,
   state: state,
   mutations: mutations,
 }

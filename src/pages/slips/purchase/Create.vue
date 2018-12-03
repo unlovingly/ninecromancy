@@ -136,7 +136,7 @@ export default Vue.extend({
       slip.publishedAt = new Date(slip.publishedAt).toISOString();
 
       this.$store.dispatch("slipModule/purchase/create", slip).then(id => {
-        this.$router.push({ name: "slip.sales.detail", params: { id: id } });
+        this.$router.push({ name: "slip.purchase.detail", params: { id: id } });
       });
     }
   },

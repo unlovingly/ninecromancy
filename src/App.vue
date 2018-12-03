@@ -61,15 +61,15 @@ export default {
         node: [
           {
             actions: {
-              "actions.create": "slip.purchase.storing",
-              "actions.index": "slip.purchase.index"
+              "actions.create": "slip.sales.sell",
+              "actions.index": "slip.sales.index"
             },
             header: "slip.sales"
           },
           {
             actions: {
-              "actions.create": "slip.sales.sell",
-              "actions.index": "slip.sales.index"
+              "actions.create": "slip.purchase.storing",
+              "actions.index": "slip.purchase.index"
             },
             header: "slip.storing"
           }

@@ -28,7 +28,7 @@ const getters = <GetterTree<State, any>>{
 
 const actions = <ActionTree<State, any>>{
   create(store: ActionContext<State, any>, slip: Slip) {
-    axios.post(`${api}/storing`, slip)
+    return axios.post(api, slip)
       .then((r) => {
         store.commit('store', r.data)
 
@@ -37,7 +37,7 @@ const actions = <ActionTree<State, any>>{
   },
 
   retrieve(store: ActionContext<State, any>) {
-    axios.get(`${api}`)
+    return axios.get(api)
       .then((r) => {
         r.data.forEach((slip: Slip) => {
           store.commit('store', slip)
@@ -47,7 +47,7 @@ const actions = <ActionTree<State, any>>{
 
   show(store: ActionContext<State, any>, id: string) {
     // TODO distinct
-    axios.get(`${api}/detail/${id}`)
+    return axios.get(`${api}/detail/${id}`)
       .then((r) => {
         store.commit('store', r.data)
       })

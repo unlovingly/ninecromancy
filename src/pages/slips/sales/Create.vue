@@ -56,7 +56,7 @@
       <v-btn fixed bottom dark fab right @click="morePurchase">
         <v-icon>add</v-icon>
       </v-btn>
-      <v-btn @click="storing">submit</v-btn>
+      <v-btn @click="sell">submit</v-btn>
     </v-container>
   </v-form>
 </template>
@@ -64,7 +64,7 @@
 <script lang="ts">
 import moment from "moment";
 import Vue from "vue";
-import { mapState } from "vuex";
+import { mapGetters, mapState } from "vuex";
 import PageHeader from "@/components/PageHeader.vue";
 import PageSubHeader from "@/components/PageSubHeader.vue";
 
@@ -95,11 +95,8 @@ export default Vue.extend({
     browse(purchase: any) {
       const code = purchase.input;
 
-      this.$store.dispatch("shopModule/browse", code).then(() => {
-        const stock = this.$store.getters["shopModule/browser"](
-          "00000000-0000-0000-0000-000000000000",
-          code
-        );
+      this.$store.dispatch("stockModule/retrieveByCode", code).then(() => {
+        const stock = this.$store.getters["stockModule/show"](code);
 
         purchase.productId = stock.productId;
       });
@@ -107,13 +104,14 @@ export default Vue.extend({
     morePurchase() {
       this.slip.items.push({ input: "", productId: "", amount: 0, price: 0 });
     },
-    storing() {
+    sell() {
       const slip = Object.assign({}, this.slip);
 
       slip.approvedAt = new Date(slip.approvedAt).toISOString();
       slip.publishedAt = new Date(slip.publishedAt).toISOString();
 
       this.$store.dispatch("slipModule/sales/create", slip).then(id => {
+        // ここで Stock を減らさないと
         this.$router.push({ name: "slip.sales.detail", params: { id: id } });
       });
     }
