@@ -5,32 +5,32 @@ import {
   ActionTree,
   MutationTree
 } from 'vuex';
-import { Publisher } from '@/models/Publisher';
+import { Customer } from '@/models/Customer';
 
-const api = 'http://localhost:9000/publishers'
+const api = 'http://localhost:9000/customers'
 
 interface State {
-  publishers: {
-    [key: string]: Publisher
+  customers: {
+    [key: string]: Customer
   }
 }
 
 const state: State = {
-  publishers: {}
+  customers: {}
 }
 
 const actions = <ActionTree<State, any>>{
   retrieve(store: ActionContext<State, any>) {
     return axios.get(api)
       .then((r) => {
-        r.data.forEach((publisher: Publisher) => {
-          store.commit('store', publisher)
+        r.data.forEach((customer: Customer) => {
+          store.commit('store', customer)
         });
       })
   },
 
-  create(store: ActionContext<State, any>, publisher: Publisher) {
-    return axios.post(api, publisher)
+  create(store: ActionContext<State, any>, customer: Customer) {
+    return axios.post(api, customer)
       .then((r) => {
         store.commit('store', r.data)
 
@@ -40,12 +40,12 @@ const actions = <ActionTree<State, any>>{
 }
 
 const mutations = <MutationTree<State>>{
-  store(state: State, payload: Publisher) {
-    Vue.set(state.publishers, payload.identity, payload)
+  store(state: State, payload: Customer) {
+    Vue.set(state.customers, payload.identity, payload)
   },
 }
 
-export const publisherModule = {
+export const customerModule = {
   namespaced: true,
   actions: actions,
   state: state,

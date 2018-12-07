@@ -1,22 +1,18 @@
 <template>
   <v-form ref="form">
-    <v-text-field
-      v-model="publisher.name"
-      :label="$t('publisher.name')"
-      required
-    ></v-text-field>
+    <v-text-field v-model="customer.name" :label="$t('customer.name')" required></v-text-field>
     <v-btn @click="create">submit</v-btn>
   </v-form>
 </template>
 
 <script lang="ts">
 import Vue from "vue";
-import { Publisher } from "@/models/Publisher";
+import { Customer } from "@/models/Customer";
 
 export default Vue.extend({
   data() {
     return {
-      publisher: {
+      customer: {
         name: ""
       }
     };
@@ -24,7 +20,7 @@ export default Vue.extend({
 
   methods: {
     create(name: string) {
-      this.$store.dispatch("publisherModule/create", this.publisher);
+      this.$store.dispatch("customerModule/create", this.customer);
     }
   }
 });

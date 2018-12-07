@@ -1,6 +1,6 @@
 export class Publisher {
   constructor(
-    public id: string = "",
+    public identity: string = "",
     public name: string,
   ) {
   }

@@ -1,5 +1,5 @@
 <template>
-  <v-card>
+  <v-card v-if="isNotEmpty">
     <v-card-title>
       {{ $t('shop.shop') }}
       <v-spacer></v-spacer>
@@ -32,13 +32,28 @@
       </template>
     </v-data-table>
   </v-card>
+  <not-found v-else/>
 </template>
 
 <script lang="ts">
+import { of } from "rxjs";
+import { map, pluck } from "rxjs/operators";
 import Vue from "vue";
 import { mapState } from "vuex";
+import NotFound from "@/components/NotFound.vue";
 
 export default Vue.extend({
+  components: {
+    NotFound
+  },
+  subscriptions() {
+    return {
+      isNotEmpty: this.$watchAsObservable("shops").pipe(
+        pluck("newValue"),
+        map(x => Object.values(x).length > 0)
+      )
+    };
+  },
   data() {
     return {
       headers: [{ text: this.$t("shop.name"), value: "name" }],

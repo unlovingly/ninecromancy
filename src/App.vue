@@ -1,13 +1,13 @@
 <template>
   <v-app>
-    <v-navigation-drawer fixed permanent app>
+    <v-navigation-drawer absolute overflow permanent app>
       <v-list dense>
         <v-list-tile avatar>
           <v-list-tile-avatar>
             <v-icon>directions_run</v-icon>
           </v-list-tile-avatar>
           <v-list-tile-content>
-            <v-list-tile-title>Shop One</v-list-tile-title>
+            <v-list-tile-title v-if="me">{{ me.name }}</v-list-tile-title>
           </v-list-tile-content>
         </v-list-tile>
       </v-list>
@@ -34,9 +34,11 @@
 </template>
 
 <script>
+import Vue from "vue";
 import RecursiveNavBar from "@/components/RecursiveNavBar.vue";
+import { Shop } from "@/models/Shop";
 
-export default {
+export default Vue.extend({
   components: {
     RecursiveNavBar
   },
@@ -74,11 +76,31 @@ export default {
             header: "slip.storing"
           }
         ]
+      },
+      {
+        header: "customer.customer",
+        actions: {
+          "actions.create": "customer.create",
+          "actions.index": "customer.index"
+        }
       }
     ]
   }),
   props: {
     source: String
+  },
+  computed: {
+    me() {
+      return this.$store.getters["shopModule/show"](
+        "00000000-0000-0000-0000-000000000000"
+      );
+    }
+  },
+  created() {
+    this.$store.dispatch(
+      "shopModule/show",
+      "00000000-0000-0000-0000-000000000000"
+    );
   }
-};
+});
 </script>

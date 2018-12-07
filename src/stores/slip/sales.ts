@@ -1,12 +1,13 @@
 import axios from 'axios';
+import Vue from 'vue';
 import {
+  createNamespacedHelpers,
   ActionContext,
   ActionTree,
   GetterTree,
   MutationTree
 } from 'vuex';
 import { Slip } from '@/models/slip/Sales';
-import Vue from 'vue';
 
 const api = 'http://localhost:9000/slips/sales'
 

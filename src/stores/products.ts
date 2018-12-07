@@ -41,7 +41,7 @@ const actions = <ActionTree<State, any>>{
 
 const mutations = <MutationTree<State>>{
   store(state: State, payload: Product) {
-    Vue.set(state.products, payload.id, payload)
+    Vue.set(state.products, payload.identity, payload)
   },
 }
 

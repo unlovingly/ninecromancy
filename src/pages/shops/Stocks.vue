@@ -27,7 +27,6 @@
 </template>
 
 <script lang="ts">
-import * as R from "ramda";
 import { Observable, Subject } from "rxjs";
 import { concatMap, filter, map, pluck, throttleTime } from "rxjs/operators";
 import Vue from "vue";

@@ -4,7 +4,7 @@
 
     <v-autocomplete
       v-model="product.publisherId"
-      :items="publishers"
+      :items="Object.values(publishers)"
       item-text="name"
       :label="$t('publisher.name')"
       item-value="id"

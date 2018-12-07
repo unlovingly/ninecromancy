@@ -1,7 +1,7 @@
 <template>
   <v-card v-if="isNotEmpty">
     <v-card-title>
-      {{ $t('publisher.name') }}
+      {{ $t('customer.name') }}
       <v-spacer></v-spacer>
       <v-text-field
         v-model="search"
@@ -13,22 +13,17 @@
     </v-card-title>
     <v-data-table
       :headers="headers"
-      :items="Object.values(publishers)"
+      :items="Object.values(customers)"
       :search="search"
     >
       <template slot="items" slot-scope="props">
         <td>{{ props.item.name }}</td>
       </template>
       <template slot="no-data">
-        <v-alert
-          :value="true"
-          color="warning"
-          icon="priority_high"
-          outline
-        >みつかりません</v-alert>
+        <v-alert color="warning" icon="priority_high" outline>みつかりません</v-alert>
       </template>
       <template slot="no-results">
-        <v-alert :value="true" color="info" icon="info">{{ search }} なんてないさ</v-alert>
+        <v-alert color="info" icon="info">{{ search }} なんてないさ</v-alert>
       </template>
     </v-data-table>
   </v-card>
@@ -48,23 +43,23 @@ export default Vue.extend({
   },
   data() {
     return {
-      headers: [{ text: this.$t("publisher.name"), value: "name" }],
+      headers: [{ text: this.$t("customer.name"), value: "name" }],
       search: ""
     };
   },
   subscriptions() {
     return {
-      isNotEmpty: this.$watchAsObservable("publishers").pipe(
+      isNotEmpty: this.$watchAsObservable("customers").pipe(
         pluck("newValue"),
         map(x => Object.values(x).length > 0)
       )
     };
   },
   computed: {
-    ...mapState("publisherModule", ["publishers"])
+    ...mapState("customerModule", ["customers"])
   },
   created() {
-    this.$store.dispatch("publisherModule/retrieve");
+    this.$store.dispatch("customerModule/retrieve");
   }
 });
 </script>

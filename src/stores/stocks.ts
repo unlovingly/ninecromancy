@@ -42,7 +42,8 @@ const actions = <ActionTree<State, any>>{
   },
 
   retrieveByQuery(store: ActionContext<State, any>, q: string) {
-    return axios.get(`${api}/retrieveWithStocksByQuery/${q}`)
+    // XSS 対策
+    return axios.get(`${api}/retrieveWithStocksByQuery?=${q}`)
       .then((r) => {
         r.data.forEach((s: Shop) => {
           s.stocks.forEach(t => {

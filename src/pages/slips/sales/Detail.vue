@@ -26,18 +26,20 @@
       </v-flex>
     </v-layout>
   </v-container>
-  <v-container v-else>not found</v-container>
+  <not-found v-else/>
 </template>
 
 <script lang="ts">
 import Vue from "vue";
 import { mapGetters, mapState } from "vuex";
 import { Slip } from "@/models/slip/Purchase";
+import NotFound from "@/components/NotFound.vue";
 import PageHeader from "@/components/PageHeader.vue";
 import PageSubHeader from "@/components/PageSubHeader.vue";
 
 export default Vue.extend({
   components: {
+    NotFound,
     PageHeader,
     PageSubHeader
   },

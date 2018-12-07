@@ -1,5 +1,5 @@
 <template>
-  <v-card>
+  <v-card v-if="isNotEmpty">
     <v-card-title>
       {{ $t('product.product') }}
       <v-spacer></v-spacer>
@@ -11,7 +11,11 @@
         hide-details
       ></v-text-field>
     </v-card-title>
-    <v-data-table :headers="headers" :items="Object.values(products)" :search="search">
+    <v-data-table
+      :headers="headers"
+      :items="Object.values(products)"
+      :search="search"
+    >
       <template slot="items" slot-scope="props">
         <td>{{ props.item.name }}</td>
         <td>{{ props.item.publisherId }}</td>
@@ -29,16 +33,22 @@
       </template>
     </v-data-table>
   </v-card>
+  <not-found v-else/>
 </template>
 
 <script lang="ts">
-import * as R from "ramda";
+import { of } from "rxjs";
+import { map, pluck, tap } from "rxjs/operators";
 import Vue from "vue";
 import { mapState } from "vuex";
 import { Publisher } from "@/models/Publisher";
 import { Product } from "@/models/Product";
+import NotFound from "@/components/NotFound.vue";
 
 export default Vue.extend({
+  components: {
+    NotFound
+  },
   data() {
     return {
       headers: [
@@ -46,6 +56,14 @@ export default Vue.extend({
         { text: this.$t("publisher.name"), value: "publisherId" }
       ],
       search: ""
+    };
+  },
+  subscriptions() {
+    return {
+      isNotEmpty: this.$watchAsObservable("products").pipe(
+        pluck("newValue"),
+        map(x => Object.values(x).length > 0)
+      )
     };
   },
   computed: {

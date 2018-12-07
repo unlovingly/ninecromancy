@@ -1,5 +1,5 @@
 <template>
-  <v-card>
+  <v-card v-if="isNotEmpty">
     <v-card-title>
       {{ $t('slip.sales') }}
       <v-spacer></v-spacer>
@@ -16,7 +16,7 @@
       :items="Object.values(slips)"
       :search="search"
     >
-      <template slot="Object.values(items)" slot-scope="props">
+      <template slot="items" slot-scope="props">
         <router-link
           tag="tr"
           :to="{ name: 'slip.sales.detail', params: { id: props.item.identity } }"
@@ -41,13 +41,20 @@
       </template>
     </v-data-table>
   </v-card>
+  <not-found v-else/>
 </template>
 
 <script lang="ts">
+import { of } from "rxjs";
+import { map, pluck } from "rxjs/operators";
 import Vue from "vue";
 import { mapState } from "vuex";
+import NotFound from "@/components/NotFound.vue";
 
 export default Vue.extend({
+  components: {
+    NotFound
+  },
   data() {
     return {
       headers: [
@@ -62,6 +69,14 @@ export default Vue.extend({
   },
   computed: {
     ...mapState("slipModule/sales", ["slips"])
+  },
+  subscriptions() {
+    return {
+      isNotEmpty: this.$watchAsObservable("slips").pipe(
+        pluck("newValue"),
+        map(x => Object.values(x).length > 0)
+      )
+    };
   },
   created() {
     this.$store.dispatch("slipModule/sales/retrieve");
