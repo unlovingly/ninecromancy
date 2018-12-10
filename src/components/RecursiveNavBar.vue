@@ -1,41 +1,49 @@
 <template>
-  <v-list-group value="true" ripple :sub-group="inside" :no-action="inside">
-    <v-list-tile slot="activator">
-      <v-list-tile-title>{{ $t(header) }}</v-list-tile-title>
-    </v-list-tile>
-    <v-divider light v-if="!node && !inside"/>
-    <v-list-tile
+  <VListGroup
+    value="true"
+    ripple
+    :sub-group="inside"
+    :no-action="inside"
+  >
+    <VListTile slot="activator">
+      <VListTileTitle>{{ $t(header) }}</VListTileTitle>
+    </VListTile>
+    <VDivider
+      v-if="!node && !inside"
+      light
+    />
+    <VListTile
       v-for="(a, l) in actions"
       :key="a"
       :to="{ name: a }"
       ripple
       exact
     >
-      <v-list-tile-title>{{ $t(l) }}</v-list-tile-title>
-    </v-list-tile>
-    <recursive-nav-bar
+      <VListTileTitle>{{ $t(l) }}</VListTileTitle>
+    </VListTile>
+    <RecursiveNavBar
+      v-for="n in node"
+      :key="n.header"
       inside
       no-action
-      v-if="node"
-      v-for="n in node"
       :actions="n.actions"
       :header="n.header"
-      :key="n.header"
       :node="n.node"
     />
-  </v-list-group>
+  </VListGroup>
 </template>
-  
-  <script lang="ts">
-import Vue from "vue";
-export default Vue.extend({
-  name: "RecursiveNavBar",
+
+<script lang="ts">
+import Vue from 'vue'
+import Component from 'vue-class-component'
+
+@Component({
   props: {
     actions: Object,
     header: String,
     node: Array,
     inside: Boolean
   }
-});
+})
+export default class RecursiveNavBar extends Vue {}
 </script>
-  

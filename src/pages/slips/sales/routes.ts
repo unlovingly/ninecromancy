@@ -1,8 +1,8 @@
 import { Route } from 'vue-router'
-import { default as Slip } from '@/pages/Page.vue'
-import { default as SalesSlipCreate } from '@/pages/slips/sales/Create.vue'
-import { default as SalesSlipIndex } from '@/pages/slips/sales/Index.vue'
-import { default as SalesSlipDetail } from '@/pages/slips/sales/Detail.vue'
+import Slip from '@/pages/Page.vue'
+import SalesSlipCreate from '@/pages/slips/sales/Create.vue'
+import SalesSlipIndex from '@/pages/slips/sales/Index.vue'
+import SalesSlipDetail from '@/pages/slips/sales/Detail.vue'
 
 export default [
   {
@@ -26,8 +26,7 @@ export default [
           id: route.params.id
         }),
         name: 'slip.sales.detail'
-      },
+      }
     ]
   }
 ]
-

@@ -1,74 +1,85 @@
 <template>
-  <v-card v-if="isNotEmpty">
-    <v-card-title>
+  <VCard v-if="isNotEmpty">
+    <VCardTitle>
       {{ $t('shop.shop') }}
-      <v-spacer></v-spacer>
-      <v-text-field
+      <VSpacer />
+      <VTextField
         v-model="search"
         append-icon="search"
         label="Search"
         single-line
         hide-details
-      ></v-text-field>
-    </v-card-title>
-    <v-data-table
+      />
+    </VCardTitle>
+    <VDataTable
       :headers="headers"
       :items="Object.values(shops)"
       :search="search"
     >
-      <template slot="items" slot-scope="props">
+      <template
+        slot="items"
+        slot-scope="props"
+      >
         <td>{{ props.item.name }}</td>
       </template>
       <template slot="no-data">
-        <v-alert
+        <VAlert
           :value="true"
           color="warning"
           icon="priority_high"
           outline
-        >みつかりません</v-alert>
+        >
+          みつかりません
+        </VAlert>
       </template>
       <template slot="no-results">
-        <v-alert :value="true" color="info" icon="info">{{ search }} なんてないさ</v-alert>
+        <VAlert
+          :value="true"
+          color="info"
+          icon="info"
+        >
+          {{ search }} なんてないさ
+        </VAlert>
       </template>
-    </v-data-table>
-  </v-card>
-  <not-found v-else/>
+    </VDataTable>
+  </VCard>
+  <NotFound v-else />
 </template>
 
 <script lang="ts">
-import { of } from "rxjs";
-import { map, merge, pluck } from "rxjs/operators";
-import Vue from "vue";
-import Component from "vue-class-component";
-import { getModule } from "vuex-module-decorators";
-import NotFound from "@/components/NotFound.vue";
-import i18n from "@/plugins/i18n";
-import Shops from "@/stores/shops";
+import { of } from 'rxjs'
+import { map, merge, pluck } from 'rxjs/operators'
+import Vue from 'vue'
+import Component from 'vue-class-component'
+import { getModule } from 'vuex-module-decorators'
+import NotFound from '@/components/NotFound.vue'
+import i18n from '@/plugins/i18n'
+import Shops from '@/stores/shops'
 
-const shopModule = getModule(Shops);
+const shopModule = getModule(Shops)
 
 @Component({
   components: { NotFound },
-  subscriptions() {
+  subscriptions () {
     return {
-      isNotEmpty: this.$watchAsObservable("shops").pipe(
-        pluck("newValue"),
+      isNotEmpty: this.$watchAsObservable('shops').pipe(
+        pluck('newValue'),
         merge(of(shopModule.shops)),
-        map(x => Object.values(x).length > 0)
+        map((x) => Object.values(x).length > 0)
       )
-    };
+    }
   }
 })
 export default class ShopsView extends Vue {
-  headers = [{ text: i18n.t("shop.name"), value: "name" }];
-  search = "";
+  headers = [{ text: i18n.t('shop.name'), value: 'name' }]
+  search = ''
 
-  get shops() {
-    return shopModule.shops;
+  get shops () {
+    return shopModule.shops
   }
 
-  created() {
-    this.$store.dispatch("shopModule/retrieve");
+  created () {
+    this.$store.dispatch('shopModule/retrieve')
   }
 }
 </script>

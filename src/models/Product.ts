@@ -1,8 +1,7 @@
 export class Product {
-  constructor(
-    public identity: string = "",
+  constructor (
+    public identity: string = '',
     public name: string,
-    public publisherId: string,
-  ) {
-  }
+    public publisherId: string
+  ) {}
 }

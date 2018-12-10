@@ -1,131 +1,147 @@
 <template>
-  <v-form ref="form">
-    <v-container>
-      <page-header>{{ $t('slip.sales') }}</page-header>
-      <v-layout>
-        <v-flex>
-          <v-menu full-width>
-            <v-text-field
+  <VForm ref="form">
+    <VContainer>
+      <PageHeader>{{ $t('slip.sales') }}</PageHeader>
+      <VLayout>
+        <VFlex>
+          <VMenu full-width>
+            <VTextField
               slot="activator"
               :value="slip.publishedAt"
               :label="$t('slip.publishedAt')"
               readonly
-            ></v-text-field>
-            <v-date-picker v-model="slip.publishedAt" landscape scrollable></v-date-picker>
-          </v-menu>
-        </v-flex>
-      </v-layout>
-      <page-sub-header>{{ $t('product.product') }}</page-sub-header>
-      <v-layout row v-for="(purchase, index) in slip.items" :key="index">
-        <v-flex xs2>
-          <v-text-field
+            />
+            <VDatePicker
+              v-model="slip.publishedAt"
+              landscape
+              scrollable
+            />
+          </VMenu>
+        </VFlex>
+      </VLayout>
+      <PageSubHeader>{{ $t('product.product') }}</PageSubHeader>
+      <VLayout
+        v-for="(purchase, index) in slip.items"
+        :key="index"
+        row
+      >
+        <VFlex xs2>
+          <VTextField
             v-model="purchase.input"
             required
             label="PLU Code"
             @keyup.enter="browse(purchase)"
           />
-        </v-flex>
-        <v-flex xs6>
-          <v-text-field
-            :label="$t('product.name')"
+        </VFlex>
+        <VFlex xs6>
+          <VTextField
             v-model="purchase.productId"
+            :label="$t('product.name')"
             required
             readonly
           />
-        </v-flex>
-        <v-flex xs2>
-          <v-text-field
+        </VFlex>
+        <VFlex xs2>
+          <VTextField
             v-model.number="purchase.price"
             type="number"
             required
             :label="$t('slip.price')"
             @keyup.enter="morePurchase"
           />
-        </v-flex>
-        <v-flex xs2>
-          <v-text-field
+        </VFlex>
+        <VFlex xs2>
+          <VTextField
             v-model.number="purchase.amount"
             type="number"
             required
             :label="$t('slip.amount')"
             @keyup.enter="morePurchase"
           />
-        </v-flex>
-      </v-layout>
-      <v-btn fixed bottom dark fab right @click="more">
-        <v-icon>add</v-icon>
-      </v-btn>
-      <v-btn @click="sell">submit</v-btn>
-    </v-container>
-  </v-form>
+        </VFlex>
+      </VLayout>
+      <VBtn
+        fixed
+        bottom
+        dark
+        fab
+        right
+        @click="more"
+      >
+        <VIcon>add</VIcon>
+      </VBtn>
+      <VBtn @click="sell">
+        submit
+      </VBtn>
+    </VContainer>
+  </VForm>
 </template>
 
 <script lang="ts">
-import moment from "moment";
-import Vue from "vue";
-import Component from "vue-class-component";
-import { getModule } from "vuex-module-decorators";
-import PageHeader from "@/components/PageHeader.vue";
-import PageSubHeader from "@/components/PageSubHeader.vue";
+import Vue from 'vue'
+import Component from 'vue-class-component'
+import { getModule } from 'vuex-module-decorators'
+import PageHeader from '@/components/PageHeader.vue'
+import PageSubHeader from '@/components/PageSubHeader.vue'
 
-import Products from "@/stores/products";
-import Publishers from "@/stores/publishers";
+import Products from '@/stores/products'
+import Publishers from '@/stores/publishers'
 
-const productModule = getModule(Products);
-const publisherModule = getModule(Publishers);
+const productModule = getModule(Products)
+const publisherModule = getModule(Publishers)
 
 @Component({
   components: { PageHeader, PageSubHeader }
 })
 export default class SlipsView extends Vue {
-  private orderedAmount = 3;
-  private publishMenu = false;
+  private orderedAmount = 3
+  private publishMenu = false
   private slip = {
-    description: "",
-    number: "",
-    senderId: "",
-    receiverId: "00000000-0000-0000-0000-000000000000",
+    description: '',
+    number: '',
+    senderId: '',
+    receiverId: '00000000-0000-0000-0000-000000000000',
     publishedAt: new Date().toISOString().substr(0, 10),
     approvedAt: new Date().toISOString().substr(0, 10),
-    items: [{ productId: "", amount: 0, price: 0 }]
-  };
-
-  get products() {
-    return productModule.products;
+    items: [{ productId: '', amount: 0, price: 0 }]
   }
 
-  get publishers() {
-    return publisherModule.publishers;
+  get products () {
+    return productModule.products
   }
 
-  browse(row: any) {
-    const pluCode = row.input;
-
-    this.$store.dispatch("stockModule/retrieveByCode", pluCode).then(() => {
-      const stock = this.$store.getters["stockModule/show"](pluCode);
-
-      row.productId = stock.productId;
-    });
+  get publishers () {
+    return publisherModule.publishers
   }
 
-  more() {
-    this.slip.items.push({ productId: "", amount: 0, price: 0 });
+  browse (row: any) {
+    const pluCode = row.input
+
+    this.$store.dispatch('stockModule/retrieveByCode', pluCode).then(() => {
+      const stock = this.$store.getters['stockModule/show'](pluCode)
+
+      row.productId = stock.productId
+    })
   }
 
-  sell() {
-    const slip = Object.assign({}, this.slip);
-
-    slip.approvedAt = new Date(slip.approvedAt).toISOString();
-    slip.publishedAt = new Date(slip.publishedAt).toISOString();
-
-    this.$store.dispatch("salesSlipModule/create", slip).then(id => {
-      this.$router.push({ name: "slip.purchase.detail", params: { id: id } });
-    });
+  more () {
+    this.slip.items.push({ productId: '', amount: 0, price: 0 })
   }
 
-  created() {
-    this.$store.dispatch("productModule/retrieve");
-    this.$store.dispatch("publisherModule/retrieve");
+  sell () {
+    const slip = Object.assign({}, this.slip)
+
+    slip.approvedAt = new Date(slip.approvedAt).toISOString()
+    slip.publishedAt = new Date(slip.publishedAt).toISOString()
+
+    this.$store.dispatch('salesSlipModule/create', slip).then(id => {
+      this.$router.push({ name: 'slip.purchase.detail', params: { id: id } })
+    })
+  }
+
+  created () {
+    this.$store.dispatch('productModule/retrieve')
+    this.$store.dispatch('publisherModule/retrieve')
   }
 }
 </script>

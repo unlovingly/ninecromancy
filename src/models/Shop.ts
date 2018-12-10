@@ -1,9 +1,8 @@
-import { Stock } from '@/models/Stock';
+import { Stock } from '@/models/Stock'
 export class Shop {
-  constructor(
-    public identity: string = "",
+  constructor (
+    public identity: string = '',
     public name: string,
     public stocks: Array<Stock>
-  ) {
-  }
+  ) {}
 }

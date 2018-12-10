@@ -1,25 +1,31 @@
 <template>
-  <v-form ref="form">
-    <v-text-field v-model="name" :label="$t('shop.name')" required></v-text-field>
-    <v-btn @click="create(name)">submit</v-btn>
-  </v-form>
+  <VForm ref="form">
+    <VTextField
+      v-model="name"
+      :label="$t('shop.name')"
+      required
+    />
+    <VBtn @click="create(name)">
+      submit
+    </VBtn>
+  </VForm>
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import Component from "vue-class-component";
-import PageHeader from "@/components/PageHeader.vue";
+import Vue from 'vue'
+import Component from 'vue-class-component'
+import PageHeader from '@/components/PageHeader.vue'
 
 @Component({
   components: { PageHeader }
 })
 export default class CreateShopView extends Vue {
   shop = {
-    name: ""
-  };
+    name: ''
+  }
 
-  create() {
-    this.$store.dispatch("shopModule/create", this.shop);
+  create () {
+    this.$store.dispatch('shopModule/create', this.shop)
   }
 }
 </script>

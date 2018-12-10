@@ -1,8 +1,8 @@
 import { Route } from 'vue-router'
-import { default as Slip } from '@/pages/Page.vue'
-import { default as PurchaseSlipTweeter } from '@/pages/slips/purchase/Index.vue'
-import { default as PurchaseSlipCreator } from '@/pages/slips/purchase/Create.vue'
-import { default as PurchaseSlipDetail } from '@/pages/slips/purchase/Detail.vue'
+import Slip from '@/pages/Page.vue'
+import PurchaseSlipTweeter from '@/pages/slips/purchase/Index.vue'
+import PurchaseSlipCreator from '@/pages/slips/purchase/Create.vue'
+import PurchaseSlipDetail from '@/pages/slips/purchase/Detail.vue'
 
 export default [
   {
@@ -26,7 +26,7 @@ export default [
           id: route.params.id
         }),
         name: 'slip.purchase.detail'
-      },
+      }
     ]
   }
 ]

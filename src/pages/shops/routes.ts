@@ -1,7 +1,7 @@
-import { default as Shop } from '@/pages/Page.vue'
-import { default as ShopIndex } from '@/pages/shops/Index.vue'
-import { default as ShopCreate } from '@/pages/shops/Create.vue'
-import { default as ShopStocks } from '@/pages/shops/Stocks.vue'
+import Shop from '@/pages/Page.vue'
+import ShopIndex from '@/pages/shops/Index.vue'
+import ShopCreate from '@/pages/shops/Create.vue'
+import ShopStocks from '@/pages/shops/Stocks.vue'
 
 export default [
   {

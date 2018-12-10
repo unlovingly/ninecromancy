@@ -1,32 +1,34 @@
 <template>
-  <v-form ref="form">
-    <page-header>{{ $t('publisher.publisher') }}</page-header>
+  <VForm ref="form">
+    <PageHeader>{{ $t('publisher.publisher') }}</PageHeader>
 
-    <v-text-field
+    <VTextField
       v-model="publisher.name"
       :label="$t('publisher.name')"
       required
-    ></v-text-field>
+    />
 
-    <v-btn @click="create">submit</v-btn>
-  </v-form>
+    <VBtn @click="create">
+      submit
+    </VBtn>
+  </VForm>
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import Component from "vue-class-component";
-import PageHeader from "@/components/PageHeader.vue";
+import Vue from 'vue'
+import Component from 'vue-class-component'
+import PageHeader from '@/components/PageHeader.vue'
 
 @Component({
   components: { PageHeader }
 })
 export default class CreatePublishersView extends Vue {
   publisher = {
-    name: ""
-  };
+    name: ''
+  }
 
-  create() {
-    this.$store.dispatch("publisherModule/create", this.publisher);
+  create () {
+    this.$store.dispatch('publisherModule/create', this.publisher)
   }
 }
 </script>

@@ -1,68 +1,75 @@
 <template>
-  <v-container grid-list-md v-if="showing">
-    <v-layout row>
-      <v-flex>
-        <v-card flat>
-          <v-card-title primary-title>
-            <page-header>{{ showing.identity }}</page-header>
-            {{ showing.senderId }} / {{ showing.number }}
-            {{ showing.publishedAt }}
-          </v-card-title>
-        </v-card>
-      </v-flex>
-    </v-layout>
-    <v-layout row>
-      <v-flex>
-        <v-data-table
+  <VContainer
+    v-if="slip"
+    grid-list-md
+  >
+    <VLayout row>
+      <VFlex>
+        <VCard flat>
+          <VCardTitle primary-title>
+            <PageHeader>{{ slip.identity }}</PageHeader>
+            {{ slip.senderId }} / {{ slip.number }} {{ slip.publishedAt }}
+          </VCardTitle>
+        </VCard>
+      </VFlex>
+    </VLayout>
+    <VLayout row>
+      <VFlex>
+        <VDataTable
           item-key="identity"
           :headers="headers"
-          :items="showing.items"
+          :items="slip.items"
         >
-          <template slot="items" slot-scope="props">
+          <template
+            slot="items"
+            slot-scope="props"
+          >
             <td>{{ props.item.productId }}</td>
             <td>{{ props.item.amount }}</td>
             <td>{{ props.item.price }}</td>
           </template>
-        </v-data-table>
-      </v-flex>
-    </v-layout>
-  </v-container>
-  <v-container v-else>not found</v-container>
+        </VDataTable>
+      </VFlex>
+    </VLayout>
+  </VContainer>
+  <NotFound v-else />
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { mapGetters, mapState } from "vuex";
-import { Slip } from "@/models/slip/Purchase";
-import PageHeader from "@/components/PageHeader.vue";
-import PageSubHeader from "@/components/PageSubHeader.vue";
+import Vue from 'vue'
+import Component from 'vue-class-component'
+import { getModule } from 'vuex-module-decorators'
+import NotFound from '@/components/NotFound.vue'
+import PageHeader from '@/components/PageHeader.vue'
+import i18n from '@/plugins/i18n'
+import Slips from '@/stores/slip/purchase'
 
-export default Vue.extend({
-  components: {
-    PageHeader,
-    PageSubHeader
-  },
-  data() {
-    return {
-      headers: [
-        { text: this.$t("product.product"), value: "productId" },
-        { text: this.$t("slip.amount"), value: "amount" },
-        { text: this.$t("slip.price"), value: "price" }
-      ],
-      search: ""
-    };
-  },
-  computed: {
-    ...mapState("slipModule/purchase", ["slips"]),
-    showing(): Slip {
-      return this.$store.getters["slipModule/purchase/show"](this.id);
-    }
-  },
-  created() {
-    this.$store.dispatch("slipModule/purchase/show", this.id);
-  },
+const slipModule = getModule(Slips)
+
+@Component<PurchaseSlipsDetailView>({
+  components: { NotFound, PageHeader },
   props: {
     id: String
   }
-});
+})
+export default class PurchaseSlipsDetailView extends Vue {
+  headers = [
+    { text: i18n.t('product.product'), value: 'productId' },
+    { text: i18n.t('slip.amount'), value: 'amount' },
+    { text: i18n.t('slip.price'), value: 'price' }
+  ];
+  id!: string;
+
+  get slip () {
+    return slipModule.slips[this.id]
+  }
+
+  get slips () {
+    return slipModule.slips
+  }
+
+  created () {
+    this.$store.dispatch('purchaseSlipModule/show', this.id)
+  }
+}
 </script>

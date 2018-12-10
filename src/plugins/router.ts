@@ -1,11 +1,11 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import { default as Routes } from '@/pages/routes'
-import { default as CustomerRoutes } from '@/pages/customers/routes'
-import { default as ProductRoutes } from '@/pages/products/routes'
-import { default as PublisherRoutes } from '@/pages/publishers/routes'
-import { default as ShopRoutes } from '@/pages/shops/routes'
-import { default as SlipRoutes } from '@/pages/slips/routes'
+import Routes from '@/pages/routes'
+import CustomerRoutes from '@/pages/customers/routes'
+import ProductRoutes from '@/pages/products/routes'
+import PublisherRoutes from '@/pages/publishers/routes'
+import ShopRoutes from '@/pages/shops/routes'
+import SlipRoutes from '@/pages/slips/routes'
 
 Vue.use(Router)
 
@@ -18,8 +18,8 @@ const router = new Router({
     ...ProductRoutes,
     ...Routes,
     ...ShopRoutes,
-    ...SlipRoutes,
+    ...SlipRoutes
   ]
-});
+})
 
 export default router

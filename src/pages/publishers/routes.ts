@@ -1,6 +1,6 @@
-import { default as Publisher } from '@/pages/Page.vue'
-import { default as PublisherIndex } from '@/pages/publishers/Index.vue'
-import { default as PublisherCreate } from '@/pages/publishers/Create.vue'
+import Publisher from '@/pages/Page.vue'
+import PublisherIndex from '@/pages/publishers/Index.vue'
+import PublisherCreate from '@/pages/publishers/Create.vue'
 
 export default [
   {

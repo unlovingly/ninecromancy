@@ -1,10 +1,14 @@
 <template>
-  <v-form>
-    <page-header>{{ $t('product.product') }}</page-header>
+  <VForm>
+    <PageHeader>{{ $t('product.product') }}</PageHeader>
 
-    <v-text-field v-model="product.name" :label="$t('product.name')" required></v-text-field>
+    <VTextField
+      v-model="product.name"
+      :label="$t('product.name')"
+      required
+    />
 
-    <v-autocomplete
+    <VAutocomplete
       v-model="product.publisherId"
       :items="Object.values(publishers)"
       item-text="name"
@@ -13,45 +17,47 @@
       required
     />
 
-    <v-btn @click="create">submit</v-btn>
-  </v-form>
+    <VBtn @click="create">
+      submit
+    </VBtn>
+  </VForm>
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import Component from "vue-class-component";
-import { getModule } from "vuex-module-decorators";
-import PageHeader from "@/components/PageHeader.vue";
-import PageSubHeader from "@/components/PageSubHeader.vue";
-import Products from "@/stores/products";
-import Publishers from "@/stores/publishers";
+import Vue from 'vue'
+import Component from 'vue-class-component'
+import { getModule } from 'vuex-module-decorators'
+import PageHeader from '@/components/PageHeader.vue'
+import PageSubHeader from '@/components/PageSubHeader.vue'
+import Products from '@/stores/products'
+import Publishers from '@/stores/publishers'
 
-const productModule = getModule(Products);
-const publisherModule = getModule(Publishers);
+const productModule = getModule(Products)
+const publisherModule = getModule(Publishers)
 
 @Component({
   components: { PageHeader, PageSubHeader }
 })
 export default class CreateProductView extends Vue {
   product = {
-    name: "",
-    publisherId: ""
-  };
-
-  get products() {
-    return productModule.products;
+    name: '',
+    publisherId: ''
   }
 
-  get publishers() {
-    return publisherModule.publishers;
+  get products () {
+    return productModule.products
   }
 
-  create() {
-    this.$store.dispatch("productModule/create", this.product);
+  get publishers () {
+    return publisherModule.publishers
   }
 
-  created() {
-    this.$store.dispatch("publisherModule/retrieve");
+  create () {
+    this.$store.dispatch('productModule/create', this.product)
+  }
+
+  created () {
+    this.$store.dispatch('publisherModule/retrieve')
   }
 }
 </script>

@@ -1,6 +1,6 @@
-import { default as Customer } from '@/pages/Page.vue'
-import { default as CustomerIndex } from '@/pages/customers/Index.vue'
-import { default as CustomerCreate } from '@/pages/customers/Create.vue'
+import Customer from '@/pages/Page.vue'
+import CustomerIndex from '@/pages/customers/Index.vue'
+import CustomerCreate from '@/pages/customers/Create.vue'
 
 export default [
   {
