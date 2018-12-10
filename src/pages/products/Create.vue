@@ -1,5 +1,7 @@
 <template>
   <v-form>
+    <page-header>{{ $t('product.product') }}</page-header>
+
     <v-text-field v-model="product.name" :label="$t('product.name')" required></v-text-field>
 
     <v-autocomplete
@@ -20,8 +22,14 @@ import Vue from "vue";
 import { mapState } from "vuex";
 import { Publisher } from "@/models/Publisher";
 import { Product } from "@/models/Product";
+import PageHeader from "@/components/PageHeader.vue";
+import PageSubHeader from "@/components/PageSubHeader.vue";
 
 export default Vue.extend({
+  components: {
+    PageHeader,
+    PageSubHeader
+  },
   data() {
     return {
       product: {

@@ -1,53 +1,59 @@
 import axios from 'axios';
+import qs from 'qs';
 import Vue from 'vue'
 import {
-  ActionContext,
-  ActionTree,
-  MutationTree
-} from 'vuex';
+  Action,
+  Module,
+  Mutation,
+  VuexModule,
+} from "vuex-module-decorators"
 import { Publisher } from '@/models/Publisher';
+import store from "@/plugins/store"
 
 const api = 'http://localhost:9000/publishers'
 
 interface State {
-  publishers: {
-    [key: string]: Publisher
+  [key: string]: Publisher
+}
+
+@Module({ dynamic: true, name: "publisherModule", namespaced: true, store })
+export default class Publishers extends VuexModule {
+  publishers: State = {}
+
+  @Action({ commit: 'storeAll' })
+  async retrieve() {
+    const result = await axios.get(api)
+
+    return result.data
   }
-}
 
-const state: State = {
-  publishers: {}
-}
+  @Action({ commit: 'storeAll' })
+  async retrieveByKeys(keys: Array<string>) {
+    const result = await axios.get(`${api}/retrieveBy`, {
+      params: keys,
+      paramsSerializer: k => qs.stringify({ publisherId: k }, { arrayFormat: "repeat" })
+    })
 
-const actions = <ActionTree<State, any>>{
-  retrieve(store: ActionContext<State, any>) {
-    return axios.get(api)
-      .then((r) => {
-        r.data.forEach((publisher: Publisher) => {
-          store.commit('store', publisher)
-        });
-      })
-  },
+    return result.data
+  }
 
-  create(store: ActionContext<State, any>, publisher: Publisher) {
-    return axios.post(api, publisher)
-      .then((r) => {
-        store.commit('store', r.data)
+  @Action({ commit: 'store' })
+  async create(publisher: Publisher) {
+    const result = await axios.post(api, publisher)
 
-        return r.data.id
-      })
-  },
-}
+    return result.data
+  }
 
-const mutations = <MutationTree<State>>{
-  store(state: State, payload: Publisher) {
-    Vue.set(state.publishers, payload.identity, payload)
-  },
-}
+  @Mutation
+  store(publisher: Publisher) {
+    Vue.set(this.publishers, publisher.identity, publisher)
+  }
 
-export const publisherModule = {
-  namespaced: true,
-  actions: actions,
-  state: state,
-  mutations: mutations,
+  @Mutation
+  storeAll(publishers: Array<Publisher>) {
+    // ミューテーションを重ねていいのか？
+    publishers.forEach(publisher =>
+      Vue.set(this.publishers, publisher.identity, publisher)
+    )
+  }
 }

@@ -2,7 +2,7 @@
   <v-app>
     <v-navigation-drawer absolute overflow permanent app>
       <v-list dense>
-        <v-list-tile avatar>
+        <v-list-tile to="myself" avatar>
           <v-list-tile-avatar>
             <v-icon>directions_run</v-icon>
           </v-list-tile-avatar>

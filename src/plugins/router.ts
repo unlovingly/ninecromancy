@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
+import { default as Routes } from '@/pages/routes'
 import { default as CustomerRoutes } from '@/pages/customers/routes'
 import { default as ProductRoutes } from '@/pages/products/routes'
 import { default as PublisherRoutes } from '@/pages/publishers/routes'
@@ -15,6 +16,7 @@ const router = new Router({
     ...CustomerRoutes,
     ...PublisherRoutes,
     ...ProductRoutes,
+    ...Routes,
     ...ShopRoutes,
     ...SlipRoutes,
   ]

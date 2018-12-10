@@ -19,17 +19,6 @@
       <template slot="items" slot-scope="props">
         <td>{{ props.item.name }}</td>
       </template>
-      <template slot="no-data">
-        <v-alert
-          :value="true"
-          color="warning"
-          icon="priority_high"
-          outline
-        >みつかりません</v-alert>
-      </template>
-      <template slot="no-results">
-        <v-alert :value="true" color="info" icon="info">{{ search }} なんてないさ</v-alert>
-      </template>
     </v-data-table>
   </v-card>
   <not-found v-else/>
@@ -37,34 +26,38 @@
 
 <script lang="ts">
 import { of } from "rxjs";
-import { map, pluck } from "rxjs/operators";
+import { map, merge, pluck, tap } from "rxjs/operators";
 import Vue from "vue";
-import { mapState } from "vuex";
+import Component from "vue-class-component";
+import { getModule } from "vuex-module-decorators";
 import NotFound from "@/components/NotFound.vue";
+import i18n from "@/plugins/i18n";
+import Publishers from "@/stores/publishers";
 
-export default Vue.extend({
-  components: {
-    NotFound
-  },
-  data() {
-    return {
-      headers: [{ text: this.$t("publisher.name"), value: "name" }],
-      search: ""
-    };
-  },
+const publisherModule = getModule(Publishers);
+
+@Component({
+  components: { NotFound },
   subscriptions() {
     return {
       isNotEmpty: this.$watchAsObservable("publishers").pipe(
         pluck("newValue"),
+        merge(of(publisherModule.publishers)),
         map(x => Object.values(x).length > 0)
       )
     };
-  },
-  computed: {
-    ...mapState("publisherModule", ["publishers"])
-  },
+  }
+})
+export default class PublishersView extends Vue {
+  headers = [{ text: i18n.t("publisher.name"), value: "name" }];
+  search = "";
+
+  get publishers() {
+    return publisherModule.publishers;
+  }
+
   created() {
     this.$store.dispatch("publisherModule/retrieve");
   }
-});
+}
 </script>

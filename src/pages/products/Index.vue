@@ -38,42 +38,54 @@
 
 <script lang="ts">
 import { of } from "rxjs";
-import { map, pluck, tap } from "rxjs/operators";
+import { map, merge, pluck, tap } from "rxjs/operators";
 import Vue from "vue";
-import { mapState } from "vuex";
-import { Publisher } from "@/models/Publisher";
-import { Product } from "@/models/Product";
+import Component from "vue-class-component";
+import { getModule } from "vuex-module-decorators";
 import NotFound from "@/components/NotFound.vue";
+import i18n from "@/plugins/i18n";
+import Products from "@/stores/products";
+import Publishers from "@/stores/publishers";
+import { promisify } from "util";
 
-export default Vue.extend({
-  components: {
-    NotFound
-  },
-  data() {
-    return {
-      headers: [
-        { text: this.$t("product.name"), value: "name" },
-        { text: this.$t("publisher.name"), value: "publisherId" }
-      ],
-      search: ""
-    };
-  },
+const productModule = getModule(Products);
+const publisherModule = getModule(Publishers);
+
+@Component({
+  components: { NotFound },
   subscriptions() {
     return {
       isNotEmpty: this.$watchAsObservable("products").pipe(
         pluck("newValue"),
+        merge(of(productModule.products)),
         map(x => Object.values(x).length > 0)
       )
     };
-  },
-  computed: {
-    ...mapState("productModule", ["products"]),
-    ...mapState("publisherModule", ["publishers"])
-  },
+  }
+})
+export default class ProductsView extends Vue {
+  headers = [
+    { text: i18n.t("product.name"), value: "name" },
+    { text: i18n.t("publisher.name"), value: "publisherId" }
+  ];
+  search = "";
+
+  get products() {
+    return productModule.products;
+  }
+
+  get publishers() {
+    return publisherModule.publishers;
+  }
+
   created() {
     this.$store.dispatch("productModule/retrieve").then(() => {
-      this.$store.dispatch("publisherModule/retrieve");
+      const keys = Object.values(productModule.products).map(
+        p => p.publisherId
+      );
+
+      this.$store.dispatch("publisherModule/retrieveByKeys", keys);
     });
   }
-});
+}
 </script>

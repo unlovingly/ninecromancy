@@ -32,7 +32,7 @@
 
 <script lang="ts">
 import { of } from "rxjs";
-import { map, pluck } from "rxjs/operators";
+import { map, merge, pluck } from "rxjs/operators";
 import Vue from "vue";
 import { mapState } from "vuex";
 import NotFound from "@/components/NotFound.vue";
@@ -51,6 +51,7 @@ export default Vue.extend({
     return {
       isNotEmpty: this.$watchAsObservable("customers").pipe(
         pluck("newValue"),
+        merge(of(this.$store.state.customerModule.customers)),
         map(x => Object.values(x).length > 0)
       )
     };

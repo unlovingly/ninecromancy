@@ -31,7 +31,6 @@
             v-model="purchase.productId"
             required
             readonly
-            autofocus
           />
         </v-flex>
         <v-flex xs2>
