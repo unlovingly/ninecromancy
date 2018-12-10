@@ -7,7 +7,5 @@ module.exports = {
       enableInSFC: true
     }
   },
-  transpileDependencies: [
-    'vuex-module-decorators'
-  ]
+  transpileDependencies: ['vuex-module-decorators']
 }
