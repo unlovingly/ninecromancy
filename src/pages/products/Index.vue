@@ -46,7 +46,6 @@ import NotFound from "@/components/NotFound.vue";
 import i18n from "@/plugins/i18n";
 import Products from "@/stores/products";
 import Publishers from "@/stores/publishers";
-import { promisify } from "util";
 
 const productModule = getModule(Products);
 const publisherModule = getModule(Publishers);

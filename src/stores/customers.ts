@@ -1,53 +1,48 @@
 import axios from 'axios';
 import Vue from 'vue'
 import {
-  ActionContext,
-  ActionTree,
-  MutationTree
-} from 'vuex';
+  Action,
+  Module,
+  Mutation,
+  VuexModule,
+} from "vuex-module-decorators"
 import { Customer } from '@/models/Customer';
+import store from "@/plugins/store"
 
 const api = 'http://localhost:9000/customers'
 
 interface State {
-  customers: {
-    [key: string]: Customer
+  [key: string]: Customer
+}
+
+@Module({ dynamic: true, name: "customerModule", namespaced: true, store })
+export default class Customers extends VuexModule {
+  customers: State = {}
+
+  @Action({ commit: 'storeAll' })
+  async retrieve() {
+    const result = await axios.get(api)
+
+    return result.data
   }
-}
 
-const state: State = {
-  customers: {}
-}
+  @Action({ commit: 'store' })
+  async create(customer: Customer) {
+    const result = await axios.post(api, customer)
 
-const actions = <ActionTree<State, any>>{
-  retrieve(store: ActionContext<State, any>) {
-    return axios.get(api)
-      .then((r) => {
-        r.data.forEach((customer: Customer) => {
-          store.commit('store', customer)
-        });
-      })
-  },
+    return result.data
+  }
 
-  create(store: ActionContext<State, any>, customer: Customer) {
-    return axios.post(api, customer)
-      .then((r) => {
-        store.commit('store', r.data)
+  @Mutation
+  store(customer: Customer) {
+    Vue.set(this.customers, customer.identity, customer)
+  }
 
-        return r.data.id
-      })
-  },
-}
-
-const mutations = <MutationTree<State>>{
-  store(state: State, payload: Customer) {
-    Vue.set(state.customers, payload.identity, payload)
-  },
-}
-
-export const customerModule = {
-  namespaced: true,
-  actions: actions,
-  state: state,
-  mutations: mutations,
+  @Mutation
+  storeAll(customers: Array<Customer>) {
+    // ミューテーションを重ねていいのか？
+    customers.forEach(customer =>
+      Vue.set(this.customers, customer.identity, customer)
+    )
+  }
 }

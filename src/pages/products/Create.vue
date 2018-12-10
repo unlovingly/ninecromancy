@@ -19,38 +19,39 @@
 
 <script lang="ts">
 import Vue from "vue";
-import { mapState } from "vuex";
-import { Publisher } from "@/models/Publisher";
-import { Product } from "@/models/Product";
+import Component from "vue-class-component";
+import { getModule } from "vuex-module-decorators";
 import PageHeader from "@/components/PageHeader.vue";
 import PageSubHeader from "@/components/PageSubHeader.vue";
+import Products from "@/stores/products";
+import Publishers from "@/stores/publishers";
 
-export default Vue.extend({
-  components: {
-    PageHeader,
-    PageSubHeader
-  },
-  data() {
-    return {
-      product: {
-        name: "",
-        publisherId: ""
-      }
-    };
-  },
+const productModule = getModule(Products);
+const publisherModule = getModule(Publishers);
 
-  computed: {
-    ...mapState("publisherModule", ["publishers"])
-  },
+@Component({
+  components: { PageHeader, PageSubHeader }
+})
+export default class CreateProductView extends Vue {
+  product = {
+    name: "",
+    publisherId: ""
+  };
+
+  get products() {
+    return productModule.products;
+  }
+
+  get publishers() {
+    return publisherModule.publishers;
+  }
+
+  create() {
+    this.$store.dispatch("productModule/create", this.product);
+  }
 
   created() {
     this.$store.dispatch("publisherModule/retrieve");
-  },
-
-  methods: {
-    create(name: string, publisher: Publisher) {
-      this.$store.dispatch("productModule/create", this.product);
-    }
   }
-});
+}
 </script>

@@ -7,19 +7,19 @@
 
 <script lang="ts">
 import Vue from "vue";
-import { Shop } from "@/models/Shop";
+import Component from "vue-class-component";
+import PageHeader from "@/components/PageHeader.vue";
 
-export default Vue.extend({
-  data() {
-    return {
-      name: ""
-    };
-  },
+@Component({
+  components: { PageHeader }
+})
+export default class CreateShopView extends Vue {
+  shop = {
+    name: ""
+  };
 
-  methods: {
-    create(name: string) {
-      this.$store.dispatch("shopModule/create", new Shop(undefined, name, []));
-    }
+  create() {
+    this.$store.dispatch("shopModule/create", this.shop);
   }
-});
+}
 </script>

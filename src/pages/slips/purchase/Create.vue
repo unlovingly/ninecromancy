@@ -86,7 +86,7 @@
           />
         </v-flex>
       </v-layout>
-      <v-btn fixed bottom dark fab right @click="morePurchase">
+      <v-btn fixed bottom dark fab right @click="more">
         <v-icon>add</v-icon>
       </v-btn>
       <v-btn @click="storing">submit</v-btn>
@@ -97,52 +97,58 @@
 <script lang="ts">
 import moment from "moment";
 import Vue from "vue";
-import { mapState } from "vuex";
+import Component from "vue-class-component";
+import { getModule } from "vuex-module-decorators";
 import PageHeader from "@/components/PageHeader.vue";
 import PageSubHeader from "@/components/PageSubHeader.vue";
+import Products from "@/stores/products";
+import Publishers from "@/stores/publishers";
 
-export default Vue.extend({
-  components: {
-    PageHeader,
-    PageSubHeader
-  },
-  data() {
-    return {
-      orderedAmount: 3,
-      publishMenu: false,
-      slip: {
-        description: "",
-        number: "",
-        senderId: "",
-        receiverId: "00000000-0000-0000-0000-000000000000",
-        publishedAt: new Date().toISOString().substr(0, 10),
-        approvedAt: new Date().toISOString().substr(0, 10),
-        items: [{ productId: "", amount: 0, price: 0 }]
-      }
-    };
-  },
-  computed: {
-    ...mapState("productModule", ["products"]),
-    ...mapState("publisherModule", ["publishers"])
-  },
-  methods: {
-    morePurchase() {
-      this.slip.items.push({ productId: "", amount: 0, price: 0 });
-    },
-    storing() {
-      const slip = Object.assign({}, this.slip);
+const productModule = getModule(Products);
+const publisherModule = getModule(Publishers);
 
-      slip.approvedAt = new Date(slip.approvedAt).toISOString();
-      slip.publishedAt = new Date(slip.publishedAt).toISOString();
+@Component({
+  components: { PageHeader, PageSubHeader }
+})
+export default class SlipsView extends Vue {
+  private orderedAmount = 3;
+  private publishMenu = false;
+  private slip = {
+    description: "",
+    number: "",
+    senderId: "",
+    receiverId: "00000000-0000-0000-0000-000000000000",
+    publishedAt: new Date().toISOString().substr(0, 10),
+    approvedAt: new Date().toISOString().substr(0, 10),
+    items: [{ productId: "", amount: 0, price: 0 }]
+  };
 
-      this.$store.dispatch("slipModule/purchase/create", slip).then(id => {
-        this.$router.push({ name: "slip.purchase.detail", params: { id: id } });
-      });
-    }
-  },
-  created() {
-    this.$store.dispatch("publisherModule/retrieve");
-    this.$store.dispatch("productModule/retrieve");
+  get products() {
+    return productModule.products;
   }
-});
+
+  get publishers() {
+    return publisherModule.publishers;
+  }
+
+  more() {
+    this.slip.items.push({ productId: "", amount: 0, price: 0 });
+  }
+
+  storing() {
+    const slip = Object.assign({}, this.slip);
+
+    slip.approvedAt = new Date(slip.approvedAt).toISOString();
+    slip.publishedAt = new Date(slip.publishedAt).toISOString();
+
+    this.$store.dispatch("purchaseSlipModule/create", slip).then(id => {
+      this.$router.push({ name: "slip.purchase.detail", params: { id: id } });
+    });
+  }
+
+  created() {
+    this.$store.dispatch("productModule/retrieve");
+    this.$store.dispatch("publisherModule/retrieve");
+  }
+}
 </script>

@@ -10,25 +10,19 @@
 
 <script lang="ts">
 import Vue from "vue";
-import { Customer } from "@/models/Customer";
+import Component from "vue-class-component";
 import PageHeader from "@/components/PageHeader.vue";
 
-export default Vue.extend({
-  components: {
-    PageHeader
-  },
-  data() {
-    return {
-      customer: {
-        name: ""
-      }
-    };
-  },
+@Component({
+  components: { PageHeader }
+})
+export default class CustomersView extends Vue {
+  customer = {
+    name: ""
+  };
 
-  methods: {
-    create(name: string) {
-      this.$store.dispatch("customerModule/create", this.customer);
-    }
+  create() {
+    this.$store.dispatch("customerModule/create", this.customer);
   }
-});
+}
 </script>

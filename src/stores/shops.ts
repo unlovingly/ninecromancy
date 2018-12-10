@@ -1,67 +1,55 @@
 import axios from 'axios';
 import Vue from 'vue'
 import {
-  ActionContext,
-  ActionTree,
-  GetterTree,
-  MutationTree
-} from 'vuex';
+  Action,
+  Module,
+  Mutation,
+  VuexModule,
+} from "vuex-module-decorators"
 import { Shop } from '@/models/Shop';
+import store from "@/plugins/store"
 
 const api = 'http://localhost:9000/shops'
 
 interface State {
-  shops: {
-    [key: string]: Shop
+  [key: string]: Shop
+}
+
+@Module({ dynamic: true, name: "shopModule", namespaced: true, store })
+export default class Shops extends VuexModule {
+  shops: State = {}
+
+  @Action({ commit: 'storeAll' })
+  async retrieve() {
+    const result = await axios.get(api)
+
+    return result.data
   }
-}
 
-const state: State = {
-  shops: {}
-}
+  @Action({ commit: 'store' })
+  async show(id: string) {
+    const result = await axios.get(`${api}/detail/${id}`)
 
-const actions = <ActionTree<State, any>>{
-  create(store: ActionContext<State, any>, shop: Shop) {
-    return axios.post(api, shop)
-      .then((r) => {
-        store.commit('store', r.data)
-
-        return r.data.id
-      })
-  },
-
-  retrieve(store: ActionContext<State, any>) {
-    return axios.get(api)
-      .then((r) => {
-        store.commit('retrieve', r.data)
-      })
-  },
-
-  show(store: ActionContext<State, any>, id: string) {
-    return axios.get(`${api}/detail/${id}`)
-      .then((r) => {
-        store.commit('store', r.data)
-      })
-  },
-}
-
-const getters = <GetterTree<State, any>>{
-  show(state) {
-    return (id: string) => state.shops[id]
+    return result.data
   }
-}
 
+  @Action({ commit: 'store' })
+  async create(shop: Shop) {
+    const result = await axios.post(api, shop)
 
-const mutations = <MutationTree<State>>{
-  store(state: State, payload: Shop) {
-    Vue.set(state.shops, payload.identity, payload)
-  },
-}
+    return result.data
+  }
 
-export const shopModule = {
-  namespaced: true,
-  actions: actions,
-  getters: getters,
-  state: state,
-  mutations: mutations,
+  @Mutation
+  store(shop: Shop) {
+    Vue.set(this.shops, shop.identity, shop)
+  }
+
+  @Mutation
+  storeAll(shops: Array<Shop>) {
+    // ミューテーションを重ねていいのか？
+    shops.forEach(shop =>
+      Vue.set(this.shops, shop.identity, shop)
+    )
+  }
 }

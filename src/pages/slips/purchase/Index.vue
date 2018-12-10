@@ -1,5 +1,5 @@
 <template>
-  <v-card v-if="isNotEmpty">
+  <v-card v-if="slips">
     <v-card-title>
       {{ $t('slip.storing') }}
       <v-spacer></v-spacer>
@@ -45,42 +45,34 @@
 </template>
 
 <script lang="ts">
-import { of } from "rxjs";
-import { map, merge, pluck } from "rxjs/operators";
 import Vue from "vue";
-import { mapState } from "vuex";
+import Component from "vue-class-component";
+import { getModule } from "vuex-module-decorators";
 import NotFound from "@/components/NotFound.vue";
+import i18n from "@/plugins/i18n";
+import Slips from "@/stores/slip/purchase";
 
-export default Vue.extend({
-  components: {
-    NotFound
-  },
-  data() {
-    return {
-      headers: [
-        { text: this.$t("slip.number"), value: "number" },
-        { text: this.$t("slip.senderId"), value: "senderId" },
-        { text: this.$t("slip.receiverId"), value: "receiverId" },
-        { text: this.$t("slip.approvedAt"), value: "approvedAt" },
-        { text: this.$t("slip.publishedAt"), value: "publishedAt" }
-      ],
-      search: ""
-    };
-  },
-  subscriptions() {
-    return {
-      isNotEmpty: this.$watchAsObservable("slips").pipe(
-        pluck("newValue"),
-        merge(of(this.$store.state.slipModule.purchase.slips)),
-        map(x => Object.values(x).length > 0)
-      )
-    };
-  },
-  computed: {
-    ...mapState("slipModule/purchase", ["slips"])
-  },
-  created() {
-    this.$store.dispatch("slipModule/purchase/retrieve");
+const slipModule = getModule(Slips);
+
+@Component({
+  components: { NotFound }
+})
+export default class PurchaseSlipsView extends Vue {
+  headers = [
+    { text: i18n.t("slip.number"), value: "number" },
+    { text: i18n.t("slip.senderId"), value: "senderId" },
+    { text: i18n.t("slip.receiverId"), value: "receiverId" },
+    { text: i18n.t("slip.approvedAt"), value: "approvedAt" },
+    { text: i18n.t("slip.publishedAt"), value: "publishedAt" }
+  ];
+  search = "";
+
+  get slips() {
+    return slipModule.slips;
   }
-});
+
+  created() {
+    this.$store.dispatch("purchaseSlipModule/retrieve");
+  }
+}
 </script>

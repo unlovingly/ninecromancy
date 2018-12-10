@@ -39,30 +39,36 @@
 import { of } from "rxjs";
 import { map, merge, pluck } from "rxjs/operators";
 import Vue from "vue";
-import { mapState } from "vuex";
+import Component from "vue-class-component";
+import { getModule } from "vuex-module-decorators";
 import NotFound from "@/components/NotFound.vue";
+import i18n from "@/plugins/i18n";
+import Shops from "@/stores/shops";
 
-export default Vue.extend({
-  components: {
-    NotFound
-  },
+const shopModule = getModule(Shops);
+
+@Component({
+  components: { NotFound },
   subscriptions() {
     return {
       isNotEmpty: this.$watchAsObservable("shops").pipe(
         pluck("newValue"),
-        merge(of(this.$store.state.shopModule.shops)),
+        merge(of(shopModule.shops)),
         map(x => Object.values(x).length > 0)
       )
     };
-  },
-  data() {
-    return {
-      headers: [{ text: this.$t("shop.name"), value: "name" }],
-      search: ""
-    };
-  },
-  computed: {
-    ...mapState("shopModule", ["shops"])
   }
-});
+})
+export default class ShopsView extends Vue {
+  headers = [{ text: i18n.t("shop.name"), value: "name" }];
+  search = "";
+
+  get shops() {
+    return shopModule.shops;
+  }
+
+  created() {
+    this.$store.dispatch("shopModule/retrieve");
+  }
+}
 </script>

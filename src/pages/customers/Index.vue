@@ -34,33 +34,36 @@
 import { of } from "rxjs";
 import { map, merge, pluck } from "rxjs/operators";
 import Vue from "vue";
-import { mapState } from "vuex";
+import Component from "vue-class-component";
+import { getModule } from "vuex-module-decorators";
 import NotFound from "@/components/NotFound.vue";
+import i18n from "@/plugins/i18n";
+import Customers from "@/stores/customers";
 
-export default Vue.extend({
-  components: {
-    NotFound
-  },
-  data() {
-    return {
-      headers: [{ text: this.$t("customer.name"), value: "name" }],
-      search: ""
-    };
-  },
+const customerModule = getModule(Customers);
+
+@Component({
+  components: { NotFound },
   subscriptions() {
     return {
       isNotEmpty: this.$watchAsObservable("customers").pipe(
         pluck("newValue"),
-        merge(of(this.$store.state.customerModule.customers)),
+        merge(of(customerModule.customers)),
         map(x => Object.values(x).length > 0)
       )
     };
-  },
-  computed: {
-    ...mapState("customerModule", ["customers"])
-  },
+  }
+})
+export default class CustomersView extends Vue {
+  headers = [{ text: i18n.t("customer.name"), value: "name" }];
+  search = "";
+
+  get customers() {
+    return customerModule.customers;
+  }
+
   created() {
     this.$store.dispatch("customerModule/retrieve");
   }
-});
+}
 </script>

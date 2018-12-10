@@ -52,7 +52,7 @@
           />
         </v-flex>
       </v-layout>
-      <v-btn fixed bottom dark fab right @click="morePurchase">
+      <v-btn fixed bottom dark fab right @click="more">
         <v-icon>add</v-icon>
       </v-btn>
       <v-btn @click="sell">submit</v-btn>
@@ -63,61 +63,69 @@
 <script lang="ts">
 import moment from "moment";
 import Vue from "vue";
-import { mapGetters, mapState } from "vuex";
+import Component from "vue-class-component";
+import { getModule } from "vuex-module-decorators";
 import PageHeader from "@/components/PageHeader.vue";
 import PageSubHeader from "@/components/PageSubHeader.vue";
 
-export default Vue.extend({
-  components: {
-    PageHeader,
-    PageSubHeader
-  },
-  data() {
-    return {
-      orderedAmount: 3,
-      publishMenu: false,
-      slip: {
-        description: "",
-        number: "",
-        senderId: "00000000-0000-0000-0000-000000000000",
-        publishedAt: new Date().toISOString().substr(0, 10),
-        approvedAt: new Date().toISOString().substr(0, 10),
-        items: [{ input: "", productId: "", amount: 0, price: 0 }]
-      }
-    };
-  },
-  computed: {
-    ...mapState("productModule", ["products"]),
-    ...mapState("publisherModule", ["publishers"])
-  },
-  methods: {
-    browse(purchase: any) {
-      const code = purchase.input;
+import Products from "@/stores/products";
+import Publishers from "@/stores/publishers";
 
-      this.$store.dispatch("stockModule/retrieveByCode", code).then(() => {
-        const stock = this.$store.getters["stockModule/show"](code);
+const productModule = getModule(Products);
+const publisherModule = getModule(Publishers);
 
-        purchase.productId = stock.productId;
-      });
-    },
-    morePurchase() {
-      this.slip.items.push({ input: "", productId: "", amount: 0, price: 0 });
-    },
-    sell() {
-      const slip = Object.assign({}, this.slip);
+@Component({
+  components: { PageHeader, PageSubHeader }
+})
+export default class SlipsView extends Vue {
+  private orderedAmount = 3;
+  private publishMenu = false;
+  private slip = {
+    description: "",
+    number: "",
+    senderId: "",
+    receiverId: "00000000-0000-0000-0000-000000000000",
+    publishedAt: new Date().toISOString().substr(0, 10),
+    approvedAt: new Date().toISOString().substr(0, 10),
+    items: [{ productId: "", amount: 0, price: 0 }]
+  };
 
-      slip.approvedAt = new Date(slip.approvedAt).toISOString();
-      slip.publishedAt = new Date(slip.publishedAt).toISOString();
-
-      this.$store.dispatch("slipModule/sales/create", slip).then(id => {
-        // ここで Stock を減らさないと
-        this.$router.push({ name: "slip.sales.detail", params: { id: id } });
-      });
-    }
-  },
-  created() {
-    this.$store.dispatch("publisherModule/retrieve");
-    this.$store.dispatch("productModule/retrieve");
+  get products() {
+    return productModule.products;
   }
-});
+
+  get publishers() {
+    return publisherModule.publishers;
+  }
+
+  browse(row: any) {
+    const pluCode = row.input;
+
+    this.$store.dispatch("stockModule/retrieveByCode", pluCode).then(() => {
+      const stock = this.$store.getters["stockModule/show"](pluCode);
+
+      row.productId = stock.productId;
+    });
+  }
+
+  more() {
+    this.slip.items.push({ productId: "", amount: 0, price: 0 });
+  }
+
+  sell() {
+    const slip = Object.assign({}, this.slip);
+
+    slip.approvedAt = new Date(slip.approvedAt).toISOString();
+    slip.publishedAt = new Date(slip.publishedAt).toISOString();
+
+    this.$store.dispatch("salesSlipModule/create", slip).then(id => {
+      this.$router.push({ name: "slip.purchase.detail", params: { id: id } });
+    });
+  }
+
+  created() {
+    this.$store.dispatch("productModule/retrieve");
+    this.$store.dispatch("publisherModule/retrieve");
+  }
+}
 </script>

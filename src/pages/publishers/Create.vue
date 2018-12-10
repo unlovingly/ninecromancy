@@ -14,25 +14,19 @@
 
 <script lang="ts">
 import Vue from "vue";
-import { Publisher } from "@/models/Publisher";
+import Component from "vue-class-component";
 import PageHeader from "@/components/PageHeader.vue";
 
-export default Vue.extend({
-  components: {
-    PageHeader
-  },
-  data() {
-    return {
-      publisher: {
-        name: ""
-      }
-    };
-  },
+@Component({
+  components: { PageHeader }
+})
+export default class CreatePublishersView extends Vue {
+  publisher = {
+    name: ""
+  };
 
-  methods: {
-    create(name: string) {
-      this.$store.dispatch("publisherModule/create", this.publisher);
-    }
+  create() {
+    this.$store.dispatch("publisherModule/create", this.publisher);
   }
-});
+}
 </script>
