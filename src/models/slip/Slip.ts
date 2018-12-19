@@ -1,24 +1,18 @@
-export class SalesSlipItem {
-  constructor (
-    public pluCode: string,
-    public amount: Number,
-    public price: Number
-  ) {}
-}
+import { Item } from '@/models/slip/Item'
 
-export class SalesSlipLike {
+export class SlipLike {
   constructor (
     public number: string,
     public description: string,
     public senderId: string,
     public approvedAt: string,
     public publishedAt: string,
-    public items: Array<SalesSlipItem>,
+    public items: Array<Item>,
     public receiverId?: string
   ) {}
 }
 
-export class SalesSlip {
+export class Slip {
   constructor (
     public identity: string,
     public number: string,
@@ -27,6 +21,6 @@ export class SalesSlip {
     public receiverId: string,
     public approvedAt: string,
     public publishedAt: string,
-    public items: Array<SalesSlipItem>
+    public items: Array<Item>
   ) {}
 }

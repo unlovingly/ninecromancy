@@ -27,7 +27,7 @@
       >
         <VFlex xs2>
           <VTextField
-            v-model="purchase.input"
+            v-model="purchase.pluCode"
             required
             label="PLU Code"
             @keyup.enter="browse(purchase)"
@@ -78,17 +78,21 @@
 </template>
 
 <script lang="ts">
+import moment from 'moment'
 import Vue from 'vue'
 import Component from 'vue-class-component'
 import { getModule } from 'vuex-module-decorators'
 import PageHeader from '@/components/PageHeader.vue'
 import PageSubHeader from '@/components/PageSubHeader.vue'
-
 import Products from '@/stores/products'
 import Publishers from '@/stores/publishers'
+import Slips from '@/stores/slip/sales'
+import Stocks from '@/stores/stocks'
 
 const productModule = getModule(Products)
 const publisherModule = getModule(Publishers)
+const slipModule = getModule(Slips)
+const stockModule = getModule(Stocks)
 
 @Component({
   components: { PageHeader, PageSubHeader }
@@ -99,11 +103,10 @@ export default class SlipsView extends Vue {
   private slip = {
     description: '',
     number: '',
-    senderId: '',
-    receiverId: '00000000-0000-0000-0000-000000000000',
-    publishedAt: new Date().toISOString().substr(0, 10),
-    approvedAt: new Date().toISOString().substr(0, 10),
-    items: [{ productId: '', amount: 0, price: 0 }]
+    senderId: '00000000-0000-0000-0000-000000000000',
+    publishedAt: moment().format('YYYY-M-D'),
+    approvedAt: moment().format('YYYY-M-D'),
+    items: [{ pluCode: '', productId: '', amount: 0, price: 0 }]
   }
 
   get products () {
@@ -115,17 +118,16 @@ export default class SlipsView extends Vue {
   }
 
   browse (row: any) {
-    const pluCode = row.input
+    const pluCode = row.pluCode
 
-    this.$store.dispatch('stockModule/retrieveByCode', pluCode).then(() => {
-      const stock = this.$store.getters['stockModule/show'](pluCode)
-
-      row.productId = stock.productId
-    })
+    stockModule.retrieveByCode(pluCode)
+      .then(s => {
+        row.productId = stockModule.stocks[pluCode].productId
+      })
   }
 
   more () {
-    this.slip.items.push({ productId: '', amount: 0, price: 0 })
+    this.slip.items.push({ pluCode: '', productId: '', amount: 0, price: 0 })
   }
 
   sell () {
@@ -134,14 +136,15 @@ export default class SlipsView extends Vue {
     slip.approvedAt = new Date(slip.approvedAt).toISOString()
     slip.publishedAt = new Date(slip.publishedAt).toISOString()
 
-    this.$store.dispatch('salesSlipModule/create', slip).then(id => {
-      this.$router.push({ name: 'slip.purchase.detail', params: { id: id } })
-    })
+    slipModule.create(slip)
+      .then(r => {
+        this.$router.push({ name: 'slip.sales.detail', params: { id: r.identity } })
+      })
   }
 
   created () {
-    this.$store.dispatch('productModule/retrieve')
-    this.$store.dispatch('publisherModule/retrieve')
+    productModule.retrieve()
+    publisherModule.retrieve()
   }
 }
 </script>

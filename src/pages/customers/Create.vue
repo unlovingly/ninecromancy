@@ -17,7 +17,11 @@
 <script lang="ts">
 import Vue from 'vue'
 import Component from 'vue-class-component'
+import { getModule } from 'vuex-module-decorators'
 import PageHeader from '@/components/PageHeader.vue'
+import Customers from '@/stores/customers'
+
+const customerModule = getModule(Customers)
 
 @Component({
   components: { PageHeader }
@@ -28,7 +32,7 @@ export default class CustomersView extends Vue {
   }
 
   create () {
-    this.$store.dispatch('customerModule/create', this.customer)
+    customerModule.create(this.customer)
   }
 }
 </script>

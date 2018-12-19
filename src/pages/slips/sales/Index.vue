@@ -1,5 +1,5 @@
 <template>
-  <VCard v-if="slips">
+  <VCard v-if="isNotEmpty">
     <VCardTitle>
       {{ $t('slip.sales') }}
       <VSpacer />
@@ -80,6 +80,10 @@ export default class SalesSlipsView extends Vue {
     { text: i18n.t('slip.publishedAt'), value: 'publishedAt' }
   ]
   search = ''
+
+  get isNotEmpty () {
+    return Object.values(this.slips).length > 0
+  }
 
   get slips () {
     return slipModule.slips

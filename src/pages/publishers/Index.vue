@@ -28,8 +28,6 @@
 </template>
 
 <script lang="ts">
-import { of } from 'rxjs'
-import { map, merge, pluck } from 'rxjs/operators'
 import Vue from 'vue'
 import Component from 'vue-class-component'
 import { getModule } from 'vuex-module-decorators'
@@ -40,20 +38,15 @@ import Publishers from '@/stores/publishers'
 const publisherModule = getModule(Publishers)
 
 @Component({
-  components: { NotFound },
-  subscriptions () {
-    return {
-      isNotEmpty: this.$watchAsObservable('publishers').pipe(
-        pluck('newValue'),
-        merge(of(publisherModule.publishers)),
-        map(x => Object.values(x).length > 0)
-      )
-    }
-  }
+  components: { NotFound }
 })
 export default class PublishersView extends Vue {
   headers = [{ text: i18n.t('publisher.name'), value: 'name' }]
   search = ''
+
+  get isNotEmpty () {
+    return Object.values(this.publishers).length > 0
+  }
 
   get publishers () {
     return publisherModule.publishers

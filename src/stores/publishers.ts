@@ -1,11 +1,16 @@
-import axios from 'axios'
+import axios, { AxiosRequestConfig } from 'axios'
+import { encaseP, encaseP2 } from 'fluture'
 import qs from 'qs'
 import Vue from 'vue'
 import { Action, Module, Mutation, VuexModule } from 'vuex-module-decorators'
-import { Publisher } from '@/models/Publisher'
+import { Publisher, PublisherLike } from '@/models/Publisher'
 import store from '@/plugins/store'
 
 const api = 'http://localhost:9000/publishers'
+
+const getter = encaseP<any, any, string>(axios.get)
+const getter2 = encaseP2<any, any, string, AxiosRequestConfig>(axios.get)
+const poster = encaseP2<any, any, string, PublisherLike>(axios.post)
 
 interface State {
   [key: string]: Publisher
@@ -15,29 +20,45 @@ interface State {
 export default class Publishers extends VuexModule {
   publishers: State = {}
 
-  @Action({ commit: 'storeAll' })
-  async retrieve () {
-    const result = await axios.get(api)
+  @Action
+  retrieve () {
+    return getter(api)
+      .map(r => r.data as Array<Publisher>)
+      .map(r => {
+        this.context.commit('storeAll', r)
 
-    return result.data
+        return r
+      })
+      .promise()
   }
 
-  @Action({ commit: 'storeAll' })
-  async retrieveByKeys (keys: Array<string>) {
-    const result = await axios.get(`${api}/retrieveBy`, {
+  @Action
+  retrieveByKeys (keys: Array<string>) {
+    const p = {
       params: keys,
-      paramsSerializer: (k) =>
+      paramsSerializer: (k: string) =>
         qs.stringify({ publisherId: k }, { arrayFormat: 'repeat' })
-    })
+    }
+    return getter2(`${api}/retrieveBy`, p)
+      .map(r => r.data as Array<Publisher>)
+      .map(r => {
+        this.context.commit('storeAll', r)
 
-    return result.data
+        return r
+      })
+      .promise()
   }
 
-  @Action({ commit: 'store' })
-  async create (publisher: Publisher) {
-    const result = await axios.post(api, publisher)
+  @Action
+  create (publisher: PublisherLike) {
+    return poster(api, publisher)
+      .map(r => r.data as Publisher)
+      .map(r => {
+        this.context.commit('store', r)
 
-    return result.data
+        return r
+      })
+      .promise()
   }
 
   @Mutation
@@ -48,7 +69,7 @@ export default class Publishers extends VuexModule {
   @Mutation
   storeAll (publishers: Array<Publisher>) {
     // ミューテーションを重ねていいのか？
-    publishers.forEach((publisher) =>
+    publishers.forEach(publisher =>
       Vue.set(this.publishers, publisher.identity, publisher)
     )
   }

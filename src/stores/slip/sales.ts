@@ -1,10 +1,17 @@
 import axios from 'axios'
+import { encaseP, encaseP2 } from 'fluture'
 import Vue from 'vue'
 import { Action, Module, Mutation, VuexModule } from 'vuex-module-decorators'
-import { Slip } from '@/models/slip/Sales'
+import {
+  SalesSlip as Slip,
+  SalesSlipLike as SlipLike
+} from '@/models/slip/Sales'
 import store from '@/plugins/store'
 
 const api = 'http://localhost:9000/slips/sales'
+
+const getter = encaseP<any, any, string>(axios.get)
+const poster = encaseP2<any, any, string, SlipLike>(axios.post)
 
 interface State {
   [key: string]: Slip
@@ -14,25 +21,40 @@ interface State {
 export default class Slips extends VuexModule {
   slips: State = {}
 
-  @Action({ commit: 'store' })
-  async create (slip: Slip) {
-    const result = await axios.post(api, slip)
+  @Action
+  create (slip: SlipLike) {
+    return poster(api, slip)
+      .map(r => r.data as Slip) // TODO reject
+      .map(r => {
+        this.context.commit('store', r)
 
-    return result.data
+        return r
+      })
+      .promise() // 本当はそのまま返したいが  vuex-module-decorators に置き換えられてしまう
   }
 
-  @Action({ commit: 'storeAll' })
-  async retrieve () {
-    const result = await axios.get(api)
+  @Action
+  retrieve () {
+    return getter(api)
+      .map(r => r.data as Array<Slip>)
+      .map(r => {
+        this.context.commit('storeAll', r)
 
-    return result.data
+        return r
+      })
+      .promise()
   }
 
-  @Action({ commit: 'store' })
-  async show (id: string) {
-    const result = await axios.get(`${api}/detail/${id}`)
+  @Action
+  show (id: string) {
+    return getter(`${api}/detail/${id}`)
+      .map(r => r.data as Slip)
+      .map(r => {
+        this.context.commit('store', r)
 
-    return result
+        return r
+      })
+      .promise()
   }
 
   @Mutation
@@ -43,6 +65,6 @@ export default class Slips extends VuexModule {
   @Mutation
   storeAll (slips: Array<Slip>) {
     // ミューテーションを重ねていいのか？
-    slips.forEach((slip) => Vue.set(this.slips, slip.identity, slip))
+    slips.forEach(slip => Vue.set(this.slips, slip.identity, slip))
   }
 }

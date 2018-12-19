@@ -42,7 +42,7 @@ import { getModule } from 'vuex-module-decorators'
 import NotFound from '@/components/NotFound.vue'
 import PageHeader from '@/components/PageHeader.vue'
 import i18n from '@/plugins/i18n'
-import Slips from '@/stores/slip/purchase'
+import Slips from '@/stores/slip/sales'
 
 const slipModule = getModule(Slips)
 
@@ -57,8 +57,8 @@ export default class SalesSlipsDetailView extends Vue {
     { text: i18n.t('product.product'), value: 'productId' },
     { text: i18n.t('slip.amount'), value: 'amount' },
     { text: i18n.t('slip.price'), value: 'price' }
-  ];
-  id!: string;
+  ]
+  id!: string
 
   get slip () {
     return slipModule.slips[this.id]
@@ -69,7 +69,7 @@ export default class SalesSlipsDetailView extends Vue {
   }
 
   created () {
-    this.$store.dispatch('salesSlipModule/show', this.id)
+    slipModule.show(this.id)
   }
 }
 </script>

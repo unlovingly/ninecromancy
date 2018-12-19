@@ -5,3 +5,7 @@ export class Product {
     public publisherId: string
   ) {}
 }
+
+export class ProductLike {
+  constructor (public name: string, public publisherId: string) {}
+}

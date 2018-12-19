@@ -17,7 +17,11 @@
 <script lang="ts">
 import Vue from 'vue'
 import Component from 'vue-class-component'
+import { getModule } from 'vuex-module-decorators'
 import PageHeader from '@/components/PageHeader.vue'
+import Publishers from '@/stores/publishers'
+
+const publisherModule = getModule(Publishers)
 
 @Component({
   components: { PageHeader }
@@ -28,7 +32,7 @@ export default class CreatePublishersView extends Vue {
   }
 
   create () {
-    this.$store.dispatch('publisherModule/create', this.publisher)
+    publisherModule.create(this.publisher)
   }
 }
 </script>

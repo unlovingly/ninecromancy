@@ -1,7 +1,7 @@
 <template>
-  <VCard v-if="slips">
+  <VCard v-if="isNotEmpty">
     <VCardTitle>
-      {{ $t("slip.storing") }}
+      {{ $t('slip.storing') }}
       <VSpacer />
       <VTextField
         v-model="search"
@@ -78,17 +78,19 @@ export default class PurchaseSlipsView extends Vue {
     { text: i18n.t('slip.receiverId'), value: 'receiverId' },
     { text: i18n.t('slip.approvedAt'), value: 'approvedAt' },
     { text: i18n.t('slip.publishedAt'), value: 'publishedAt' }
-  ];
-  search = '';
+  ]
+  search = ''
+
+  get isNotEmpty () {
+    return Object.values(this.slips).length > 0
+  }
 
   get slips () {
     return slipModule.slips
   }
 
   created () {
-    this.$store.dispatch('purchaseSlipModule/retrieve').then(() => {
-      console.log(Object.values(this.slips).length)
-    })
+    slipModule.retrieve()
   }
 }
 </script>

@@ -57,8 +57,8 @@ export default class PurchaseSlipsDetailView extends Vue {
     { text: i18n.t('product.product'), value: 'productId' },
     { text: i18n.t('slip.amount'), value: 'amount' },
     { text: i18n.t('slip.price'), value: 'price' }
-  ];
-  id!: string;
+  ]
+  id!: string
 
   get slip () {
     return slipModule.slips[this.id]
@@ -69,7 +69,7 @@ export default class PurchaseSlipsDetailView extends Vue {
   }
 
   created () {
-    this.$store.dispatch('purchaseSlipModule/show', this.id)
+    slipModule.show(this.id)
   }
 }
 </script>

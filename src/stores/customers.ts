@@ -1,10 +1,14 @@
 import axios from 'axios'
+import { encaseP, encaseP2 } from 'fluture'
 import Vue from 'vue'
 import { Action, Module, Mutation, VuexModule } from 'vuex-module-decorators'
-import { Customer } from '@/models/Customer'
+import { Customer, CustomerLike } from '@/models/Customer'
 import store from '@/plugins/store'
 
 const api = 'http://localhost:9000/customers'
+
+const getter = encaseP<any, any, string>(axios.get)
+const poster = encaseP2<any, any, string, CustomerLike>(axios.post)
 
 interface State {
   [key: string]: Customer
@@ -14,18 +18,28 @@ interface State {
 export default class Customers extends VuexModule {
   customers: State = {}
 
-  @Action({ commit: 'storeAll' })
-  async retrieve () {
-    const result = await axios.get(api)
+  @Action
+  retrieve () {
+    return getter(api)
+      .map(r => r.data as Array<Customer>)
+      .map(r => {
+        this.context.commit('storeAll', r)
 
-    return result.data
+        return r
+      })
+      .promise()
   }
 
-  @Action({ commit: 'store' })
-  async create (customer: Customer) {
-    const result = await axios.post(api, customer)
+  @Action
+  create (customer: CustomerLike) {
+    return poster(api, customer)
+      .map(r => r.data as Customer)
+      .map(r => {
+        this.context.commit('store', r)
 
-    return result.data
+        return r
+      })
+      .promise()
   }
 
   @Mutation
@@ -36,7 +50,7 @@ export default class Customers extends VuexModule {
   @Mutation
   storeAll (customers: Array<Customer>) {
     // ミューテーションを重ねていいのか？
-    customers.forEach((customer) =>
+    customers.forEach(customer =>
       Vue.set(this.customers, customer.identity, customer)
     )
   }

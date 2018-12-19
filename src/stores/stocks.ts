@@ -1,10 +1,13 @@
 import axios from 'axios'
+import { encaseP } from 'fluture'
 import Vue from 'vue'
 import { Action, Module, Mutation, VuexModule } from 'vuex-module-decorators'
 import { Stock } from '@/models/Stock'
 import store from '@/plugins/store'
 
 const api = 'http://localhost:9000/shops'
+
+const getter = encaseP<any, any, string>(axios.get)
 
 interface State {
   [key: string]: Stock
@@ -14,18 +17,28 @@ interface State {
 export default class Stocks extends VuexModule {
   stocks: State = {}
 
-  @Action({ commit: 'storeAll' })
-  async retrieveByCode (pluCode: string) {
-    const result = await axios.get(`${api}/retrieveWithStocksByCode/${pluCode}`)
+  @Action
+  retrieveByCode (pluCode: string) {
+    return getter(`${api}/retrieveWithStocksByCode/${pluCode}`)
+      .map(r => r.data.stocks as Array<Stock>)
+      .map(r => {
+        this.context.commit('storeAll', r)
 
-    return result.data
+        return r
+      })
+      .promise()
   }
 
-  @Action({ commit: 'storeAll' })
-  async retrieveByQuery (q: string) {
-    const result = await axios.get(`${api}/retrieveWithStocksByQuery?q=${q}`)
+  @Action
+  retrieveByQuery (q: string) {
+    return getter(`${api}/retrieveWithStocksByQuery?q=${q}`)
+      .map(r => r.data.stocks as Array<Stock>)
+      .map(r => {
+        this.context.commit('storeAll', r)
 
-    return result.data
+        return r
+      })
+      .promise()
   }
 
   @Mutation

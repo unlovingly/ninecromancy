@@ -13,7 +13,7 @@
       :items="Object.values(publishers)"
       item-text="name"
       :label="$t('publisher.name')"
-      item-value="id"
+      item-value="identity"
       required
     />
 
@@ -53,11 +53,12 @@ export default class CreateProductView extends Vue {
   }
 
   create () {
-    this.$store.dispatch('productModule/create', this.product)
+    productModule.create(this.product)
   }
 
   created () {
-    this.$store.dispatch('publisherModule/retrieve')
+    productModule.retrieve()
+    publisherModule.retrieve()
   }
 }
 </script>

@@ -1,10 +1,14 @@
 import axios from 'axios'
+import { encaseP, encaseP2 } from 'fluture'
 import Vue from 'vue'
 import { Action, Module, Mutation, VuexModule } from 'vuex-module-decorators'
-import { Product } from '@/models/Product'
+import { Product, ProductLike } from '@/models/Product'
 import store from '@/plugins/store'
 
 const api = 'http://localhost:9000/products'
+
+const getter = encaseP<any, any, string>(axios.get)
+const poster = encaseP2<any, any, string, ProductLike>(axios.post)
 
 interface State {
   [key: string]: Product
@@ -14,18 +18,28 @@ interface State {
 export default class Products extends VuexModule {
   products: State = {}
 
-  @Action({ commit: 'storeAll' })
-  async retrieve () {
-    const result = await axios.get(api)
+  @Action
+  retrieve () {
+    return getter(api)
+      .map(r => r.data as Array<Product>)
+      .map(r => {
+        this.context.commit('storeAll', r)
 
-    return result.data
+        return r
+      })
+      .promise()
   }
 
-  @Action({ commit: 'store' })
-  async create (product: Product) {
-    const result = await axios.post(api, product)
+  @Action
+  create (product: ProductLike) {
+    return poster(api, product)
+      .map(r => r.data as Product)
+      .map(r => {
+        this.context.commit('store', r)
 
-    return result.data
+        return r
+      })
+      .promise()
   }
 
   @Mutation
@@ -36,7 +50,7 @@ export default class Products extends VuexModule {
   @Mutation
   storeAll (products: Array<Product>) {
     // ミューテーションを重ねていいのか？
-    products.forEach((product) =>
+    products.forEach(product =>
       Vue.set(this.products, product.identity, product)
     )
   }

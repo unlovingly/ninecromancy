@@ -16,7 +16,7 @@
             :items="Object.values(publishers)"
             :label="$t('publisher.name')"
             item-text="name"
-            item-value="id"
+            item-value="identity"
             required
           />
         </VFlex>
@@ -74,7 +74,7 @@
             :items="Object.values(products)"
             :label="$t('product.name')"
             item-text="name"
-            item-value="id"
+            item-value="identity"
             required
             autofocus
           />
@@ -116,6 +116,7 @@
 </template>
 
 <script lang="ts">
+import moment from 'moment'
 import Vue from 'vue'
 import Component from 'vue-class-component'
 import { getModule } from 'vuex-module-decorators'
@@ -123,9 +124,11 @@ import PageHeader from '@/components/PageHeader.vue'
 import PageSubHeader from '@/components/PageSubHeader.vue'
 import Products from '@/stores/products'
 import Publishers from '@/stores/publishers'
+import Slips from '@/stores/slip/purchase'
 
 const productModule = getModule(Products)
 const publisherModule = getModule(Publishers)
+const slipModule = getModule(Slips)
 
 @Component({
   components: { PageHeader, PageSubHeader }
@@ -138,8 +141,8 @@ export default class SlipsView extends Vue {
     number: '',
     senderId: '',
     receiverId: '00000000-0000-0000-0000-000000000000',
-    publishedAt: new Date().toISOString().substr(0, 10),
-    approvedAt: new Date().toISOString().substr(0, 10),
+    publishedAt: moment().format('YYYY-M-D'),
+    approvedAt: moment().format('YYYY-M-D'),
     items: [{ productId: '', amount: 0, price: 0 }]
   }
 
@@ -156,19 +159,20 @@ export default class SlipsView extends Vue {
   }
 
   storing () {
-    const slip = Object.assign({}, this.slip)
-
-    slip.approvedAt = new Date(slip.approvedAt).toISOString()
-    slip.publishedAt = new Date(slip.publishedAt).toISOString()
-
-    this.$store.dispatch('purchaseSlipModule/create', slip).then(id => {
-      this.$router.push({ name: 'slip.purchase.detail', params: { id: id } })
+    const slip = Object.assign({}, this.slip, {
+      approvedAt: new Date(this.slip.approvedAt).toISOString(),
+      publishedAt: new Date(this.slip.publishedAt).toISOString()
     })
+
+    slipModule.create(slip)
+      .then(r => {
+        this.$router.push({ name: 'slip.purchase.detail', params: { id: r.identity } })
+      })
   }
 
   created () {
-    this.$store.dispatch('productModule/retrieve')
-    this.$store.dispatch('publisherModule/retrieve')
+    productModule.retrieve()
+    publisherModule.retrieve()
   }
 }
 </script>

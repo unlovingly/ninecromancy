@@ -48,8 +48,6 @@
 </template>
 
 <script lang="ts">
-import { of } from 'rxjs'
-import { map, merge, pluck } from 'rxjs/operators'
 import Vue from 'vue'
 import Component from 'vue-class-component'
 import { getModule } from 'vuex-module-decorators'
@@ -62,16 +60,7 @@ const productModule = getModule(Products)
 const publisherModule = getModule(Publishers)
 
 @Component({
-  components: { NotFound },
-  subscriptions () {
-    return {
-      isNotEmpty: this.$watchAsObservable('products').pipe(
-        pluck('newValue'),
-        merge(of(productModule.products)),
-        map(x => Object.values(x).length > 0)
-      )
-    }
-  }
+  components: { NotFound }
 })
 export default class ProductsView extends Vue {
   headers = [
@@ -79,6 +68,10 @@ export default class ProductsView extends Vue {
     { text: i18n.t('publisher.name'), value: 'publisherId' }
   ]
   search = ''
+
+  get isNotEmpty () {
+    return Object.values(this.products).length > 0
+  }
 
   get products () {
     return productModule.products
@@ -89,10 +82,10 @@ export default class ProductsView extends Vue {
   }
 
   created () {
-    this.$store.dispatch('productModule/retrieve').then(() => {
+    productModule.retrieve().then(() => {
       const keys = Object.values(productModule.products).map(p => p.publisherId)
 
-      this.$store.dispatch('publisherModule/retrieveByKeys', keys)
+      publisherModule.retrieveByKeys(keys)
     })
   }
 }

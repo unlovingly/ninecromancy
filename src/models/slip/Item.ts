@@ -1,8 +1,6 @@
-import { Product } from '@/models/Product'
-
 export class Item {
   constructor (
-    public product: Product,
+    public productId: string,
     public amount: Number,
     public price: Number
   ) {}

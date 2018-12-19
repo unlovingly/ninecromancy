@@ -45,8 +45,6 @@
 </template>
 
 <script lang="ts">
-import { of } from 'rxjs'
-import { map, merge, pluck } from 'rxjs/operators'
 import Vue from 'vue'
 import Component from 'vue-class-component'
 import { getModule } from 'vuex-module-decorators'
@@ -57,16 +55,7 @@ import Customers from '@/stores/customers'
 const customerModule = getModule(Customers)
 
 @Component({
-  components: { NotFound },
-  subscriptions () {
-    return {
-      isNotEmpty: this.$watchAsObservable('customers').pipe(
-        pluck('newValue'),
-        merge(of(customerModule.customers)),
-        map((x) => Object.values(x).length > 0)
-      )
-    }
-  }
+  components: { NotFound }
 })
 export default class CustomersView extends Vue {
   headers = [{ text: i18n.t('customer.name'), value: 'name' }]
@@ -76,8 +65,12 @@ export default class CustomersView extends Vue {
     return customerModule.customers
   }
 
+  get isNotEmpty () {
+    return Object.values(this.customers).length > 0
+  }
+
   created () {
-    this.$store.dispatch('customerModule/retrieve')
+    customerModule.retrieve()
   }
 }
 </script>
