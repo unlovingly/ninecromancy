@@ -8,16 +8,16 @@
 import Vue from 'vue'
 import Component from 'vue-class-component'
 import { getModule } from 'vuex-module-decorators'
+import Application from '@/stores/app'
 import Shops from '@/stores/shops'
 
+const appModule = getModule(Application)
 const shopModule = getModule(Shops)
 
 @Component
 export default class MyselfView extends Vue {
-  private shopId = '00000000-0000-0000-0000-000000000000'
-
   get me () {
-    return shopModule.shops[this.shopId]
+    return shopModule.shops[appModule.app.shopId]
   }
 }
 </script>

@@ -2,11 +2,19 @@ import axios, { AxiosRequestConfig } from 'axios'
 import { encaseP, encaseP2 } from 'fluture'
 import qs from 'qs'
 import Vue from 'vue'
-import { Action, Module, Mutation, VuexModule } from 'vuex-module-decorators'
+import {
+  getModule,
+  Action,
+  Module,
+  Mutation,
+  VuexModule
+} from 'vuex-module-decorators'
 import { Publisher, PublisherLike } from '@/models/Publisher'
 import store from '@/plugins/store'
+import Application from '@/stores/app'
 
-const api = 'http://localhost:9000/publishers'
+const appModule = getModule(Application)
+const api = appModule.app.api + '/publishers'
 
 const getter = encaseP<any, any, string>(axios.get)
 const getter2 = encaseP2<any, any, string, AxiosRequestConfig>(axios.get)

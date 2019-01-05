@@ -1,11 +1,19 @@
 import axios from 'axios'
 import { encaseP, encaseP2 } from 'fluture'
 import Vue from 'vue'
-import { Action, Module, Mutation, VuexModule } from 'vuex-module-decorators'
+import {
+  getModule,
+  Action,
+  Module,
+  Mutation,
+  VuexModule
+} from 'vuex-module-decorators'
 import { Product, ProductLike } from '@/models/Product'
 import store from '@/plugins/store'
+import Application from '@/stores/app'
 
-const api = 'http://localhost:9000/products'
+const appModule = getModule(Application)
+const api = appModule.app.api + '/products'
 
 const getter = encaseP<any, any, string>(axios.get)
 const poster = encaseP2<any, any, string, ProductLike>(axios.post)

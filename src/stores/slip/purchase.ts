@@ -1,14 +1,22 @@
 import axios from 'axios'
 import { encaseP, encaseP2 } from 'fluture'
 import Vue from 'vue'
-import { Action, Module, Mutation, VuexModule } from 'vuex-module-decorators'
+import {
+  getModule,
+  Action,
+  Module,
+  Mutation,
+  VuexModule
+} from 'vuex-module-decorators'
 import {
   PurchaseSlip as Slip,
   PurchaseSlipLike as SlipLike
 } from '@/models/slip/Purchase'
 import store from '@/plugins/store'
+import Application from '@/stores/app'
 
-const api = 'http://localhost:9000/slips/purchases'
+const appModule = getModule(Application)
+const api = appModule.app.api + '/slips/purchases'
 
 const getter = encaseP<any, any, string>(axios.get)
 const poster = encaseP2<any, any, string, SlipLike>(axios.post)
