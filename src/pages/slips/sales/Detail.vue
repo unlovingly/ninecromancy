@@ -8,7 +8,7 @@
         <VCard flat>
           <VCardTitle primary-title>
             <PageHeader>{{ slip.identity }}</PageHeader>
-            {{ slip.senderId }} / {{ slip.number }} {{ slip.publishedAt }}
+            {{ slip.publishedAt }}
           </VCardTitle>
         </VCard>
       </VFlex>
@@ -42,17 +42,17 @@ import { getModule } from 'vuex-module-decorators'
 import NotFound from '@/components/NotFound.vue'
 import PageHeader from '@/components/PageHeader.vue'
 import i18n from '@/plugins/i18n'
-import Slips from '@/stores/slip/purchase'
+import Slips from '@/stores/slip/sales'
 
 const slipModule = getModule(Slips)
 
-@Component<PurchaseSlipsDetailView>({
+@Component<SalesSlipsDetailView>({
   components: { NotFound, PageHeader },
   props: {
     id: String
   }
 })
-export default class PurchaseSlipsDetailView extends Vue {
+export default class SalesSlipsDetailView extends Vue {
   headers = [
     { text: i18n.t('product.product'), value: 'productId' },
     { text: i18n.t('slip.amount'), value: 'amount' },

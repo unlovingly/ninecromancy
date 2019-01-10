@@ -1,54 +1,62 @@
-import axios from 'axios';
+import axios from 'axios'
+import { encaseP } from 'fluture'
+import Vue from 'vue'
 import {
-  ActionContext,
-  ActionTree,
-  ModuleTree,
-  MutationTree
-} from 'vuex';
-import { Shop } from '@/models/Shop';
-import { Stock } from '@/models/Stock';
+  getModule,
+  Action,
+  Module,
+  Mutation,
+  VuexModule
+} from 'vuex-module-decorators'
+import { Stock } from '@/models/Stock'
+import store from '@/plugins/store'
+import Application from '@/stores/app'
 
-const api = 'http://localhost:9000/shops/stocks'
+const appModule = getModule(Application)
+const api = appModule.app.api + '/shops'
+
+const getter = encaseP<any, any, string>(axios.get)
 
 interface State {
-  stocks: Array<Stock>;
+  [key: string]: Stock
 }
 
-const state: State = {
-  stocks: [
-  ]
-}
+@Module({ dynamic: true, name: 'stockModule', namespaced: true, store })
+export default class Stocks extends VuexModule {
+  stocks: State = {}
 
-const actions = <ActionTree<State, any>>{
-  retrieve(store: ActionContext<State, any>, q: string) {
-    axios.get(`${api}/${q}`)
-      .then((r) => {
-        r.data.forEach((s: Shop) => {
-          s.stocks.forEach(t => {
-            store.commit('retrieve', t)
-          });
-        });
+  @Action
+  retrieveByCode (pluCode: string) {
+    return getter(`${api}/retrieveWithStocksByCode/${pluCode}`)
+      .map(r => r.data.stocks as Array<Stock>)
+      .map(r => {
+        this.context.commit('storeAll', r)
+
+        return r
       })
-  },
+      .promise()
+  }
 
-  create(store: ActionContext<State, any>, stock: Stock) {
-    store.commit('store', stock);
-  },
-}
+  @Action
+  retrieveByQuery (q: string) {
+    return getter(`${api}/retrieveWithStocksByQuery?q=${q}`)
+      .map(r => r.data.stocks as Array<Stock>)
+      .map(r => {
+        this.context.commit('storeAll', r)
 
-const mutations = <MutationTree<State>>{
-  retrieve(state: State, payload: Stock) {
-    state.stocks.push(payload)
-  },
+        return r
+      })
+      .promise()
+  }
 
-  store(state: State, payload: Stock) {
-    state.stocks.push(payload)
-  },
-}
+  @Mutation
+  store (stock: Stock) {
+    Vue.set(this.stocks, stock.pluCode, stock)
+  }
 
-export const stockModule = {
-  namespaced: true,
-  actions: actions,
-  state: state,
-  mutations: mutations,
+  @Mutation
+  storeAll (stocks: Array<Stock>) {
+    // ミューテーションを重ねていいのか？
+    stocks.forEach(stock => Vue.set(this.stocks, stock.pluCode, stock))
+  }
 }

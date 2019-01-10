@@ -1,15 +1,6 @@
-import { Item } from '@/models/slip/Item';
+import { Item } from '@/models/slip/Item'
+import { Slip, SlipLike } from '@/models/slip/Slip'
 
-export class Slip {
-  constructor(
-    public identity: string = "",
-    public number: string,
-    public description: string,
-    public senderId: string,
-    public receiverId: string,
-    public approvedAt: Date = new Date(),
-    public publishedAt: Date,
-    public items: Array<Item>,
-  ) {
-  }
-}
+export class PurchaseSlipLike extends SlipLike {}
+
+export class PurchaseSlip extends Slip {}

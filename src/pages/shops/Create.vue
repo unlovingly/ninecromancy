@@ -1,32 +1,35 @@
 <template>
-  <v-form ref="form">
-    <v-text-field v-model="name" :label="$t('shop.name')" required></v-text-field>
-    <v-btn :disabled="!valid" @click="create(name)">submit</v-btn>
-  </v-form>
+  <VForm ref="form">
+    <VTextField
+      v-model="name"
+      :label="$t('shop.name')"
+      required
+    />
+    <VBtn @click="create(name)">
+      submit
+    </VBtn>
+  </VForm>
 </template>
 
 <script lang="ts">
-import * as R from "ramda";
-import Vue from "vue";
-import { Shop } from "@/models/Shop";
+import Vue from 'vue'
+import Component from 'vue-class-component'
+import { getModule } from 'vuex-module-decorators'
+import PageHeader from '@/components/PageHeader.vue'
+import Shops from '@/stores/shops'
 
-export default Vue.extend({
-  data() {
-    return {
-      name: ""
-    };
-  },
+const shopModule = getModule(Shops)
 
-  computed: {
-    valid: function() {
-      return !R.isEmpty(this.name);
-    }
-  },
-
-  methods: {
-    create(name: string) {
-      this.$store.dispatch("shopModule/create", new Shop(undefined, name, []));
-    }
+@Component({
+  components: { PageHeader }
+})
+export default class CreateShopView extends Vue {
+  shop = {
+    name: ''
   }
-});
+
+  create () {
+    shopModule.create(this.shop)
+  }
+}
 </script>

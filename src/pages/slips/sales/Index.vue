@@ -1,14 +1,14 @@
 <template>
   <VCard v-if="isNotEmpty">
     <VCardTitle>
-      {{ $t('slip.storing') }}
+      {{ $t('slip.sales') }}
       <VSpacer />
       <VTextField
         v-model="search"
         append-icon="search"
-        hide-details
         label="Search"
         single-line
+        hide-details
       />
     </VCardTitle>
     <VDataTable
@@ -21,11 +21,11 @@
         slot-scope="props"
       >
         <RouterLink
+          tag="tr"
           :to="{
-            name: 'slip.purchase.detail',
+            name: 'slip.sales.detail',
             params: { id: props.item.identity }
           }"
-          tag="tr"
         >
           <td>{{ props.item.number }}</td>
           <td>{{ props.item.senderId }}</td>
@@ -64,14 +64,14 @@ import Component from 'vue-class-component'
 import { getModule } from 'vuex-module-decorators'
 import NotFound from '@/components/NotFound.vue'
 import i18n from '@/plugins/i18n'
-import Slips from '@/stores/slip/purchase'
+import Slips from '@/stores/slip/sales'
 
 const slipModule = getModule(Slips)
 
 @Component({
   components: { NotFound }
 })
-export default class PurchaseSlipsView extends Vue {
+export default class SalesSlipsView extends Vue {
   headers = [
     { text: i18n.t('slip.number'), value: 'number' },
     { text: i18n.t('slip.senderId'), value: 'senderId' },
@@ -90,7 +90,7 @@ export default class PurchaseSlipsView extends Vue {
   }
 
   created () {
-    slipModule.retrieve()
+    this.$store.dispatch('salesSlipModule/retrieve')
   }
 }
 </script>

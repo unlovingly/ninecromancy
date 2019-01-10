@@ -1,147 +1,178 @@
 <template>
-  <v-form ref="form">
-    <v-container>
-      <page-header>{{ $t('slip.storing') }}</page-header>
-      <v-layout>
-        <v-flex xs6>
-          <v-text-field
-            :label="$t('slip.number')"
+  <VForm ref="form">
+    <VContainer>
+      <PageHeader>{{ $t('slip.storing') }}</PageHeader>
+      <VLayout>
+        <VFlex xs6>
+          <VTextField
             v-model="slip.number"
-            required
-          ></v-text-field>
-        </v-flex>
-        <v-flex xs6>
-          <v-autocomplete
-            :items="publishers"
-            :label="$t('publisher.name')"
-            item-text="name"
-            item-value="id"
-            v-model="slip.senderId"
+            :label="$t('slip.number')"
             required
           />
-        </v-flex>
-      </v-layout>
-      <v-layout>
-        <v-flex>
-          <v-text-field
+        </VFlex>
+        <VFlex xs6>
+          <VAutocomplete
+            v-model="slip.senderId"
+            :items="Object.values(publishers)"
+            :label="$t('publisher.name')"
+            item-text="name"
+            item-value="identity"
+            required
+          />
+        </VFlex>
+      </VLayout>
+      <VLayout>
+        <VFlex>
+          <VTextField
             v-model="slip.description"
             :label="$t('slip.description')"
             required
-          ></v-text-field>
-        </v-flex>
-      </v-layout>
-      <v-layout>
-        <v-flex xs6>
-          <v-menu full-width>
-            <v-text-field
+          />
+        </VFlex>
+      </VLayout>
+      <VLayout>
+        <VFlex xs6>
+          <VMenu full-width>
+            <VTextField
               slot="activator"
               :value="slip.publishedAt"
               :label="$t('slip.publishedAt')"
               readonly
-            ></v-text-field>
-            <v-date-picker v-model="slip.publishedAt" landscape scrollable></v-date-picker>
-          </v-menu>
-        </v-flex>
-        <v-flex xs6>
-          <v-menu full-width>
-            <v-text-field
+            />
+            <VDatePicker
+              v-model="slip.publishedAt"
+              landscape
+              scrollable
+            />
+          </VMenu>
+        </VFlex>
+        <VFlex xs6>
+          <VMenu full-width>
+            <VTextField
               slot="activator"
               :value="slip.approvedAt"
               :label="$t('slip.approvedAt')"
               readonly
-            ></v-text-field>
-            <v-date-picker v-model="slip.approvedAt" landscape scrollable></v-date-picker>
-          </v-menu>
-        </v-flex>
-      </v-layout>
-      <page-sub-header>{{ $t('product.product') }}</page-sub-header>
-      <v-layout row v-for="(purchase, index) in slip.items" :key="index">
-        <v-flex xs8>
-          <v-autocomplete
-            :items="products"
-            :label="$t('product.name')"
+            />
+            <VDatePicker
+              v-model="slip.approvedAt"
+              landscape
+              scrollable
+            />
+          </VMenu>
+        </VFlex>
+      </VLayout>
+      <PageSubHeader>{{ $t('product.product') }}</PageSubHeader>
+      <VLayout
+        v-for="(purchase, index) in slip.items"
+        :key="index"
+        row
+      >
+        <VFlex xs8>
+          <VAutocomplete
             v-model="purchase.productId"
+            :items="Object.values(products)"
+            :label="$t('product.name')"
             item-text="name"
-            item-value="id"
+            item-value="identity"
             required
             autofocus
           />
-        </v-flex>
-        <v-flex xs2>
-          <v-text-field
+        </VFlex>
+        <VFlex xs2>
+          <VTextField
             v-model.number="purchase.price"
             type="number"
             required
             :label="$t('slip.price')"
             @keyup.enter="morePurchase"
           />
-        </v-flex>
-        <v-flex xs2>
-          <v-text-field
+        </VFlex>
+        <VFlex xs2>
+          <VTextField
             v-model.number="purchase.amount"
             type="number"
             required
             :label="$t('slip.amount')"
             @keyup.enter="morePurchase"
           />
-        </v-flex>
-      </v-layout>
-      <v-btn fixed bottom dark fab right @click="morePurchase">
-        <v-icon>add</v-icon>
-      </v-btn>
-      <v-btn @click="storing">submit</v-btn>
-    </v-container>
-  </v-form>
+        </VFlex>
+      </VLayout>
+      <VBtn
+        fixed
+        bottom
+        dark
+        fab
+        right
+        @click="more"
+      >
+        <VIcon>add</VIcon>
+      </VBtn>
+      <VBtn @click="storing">
+        submit
+      </VBtn>
+    </VContainer>
+  </VForm>
 </template>
 
 <script lang="ts">
-import moment from "moment";
-import * as R from "ramda";
-import Vue from "vue";
-import { mapState } from "vuex";
-import PageHeader from "@/components/PageHeader.vue";
-import PageSubHeader from "@/components/PageSubHeader.vue";
+import moment from 'moment'
+import Vue from 'vue'
+import Component from 'vue-class-component'
+import { getModule } from 'vuex-module-decorators'
+import PageHeader from '@/components/PageHeader.vue'
+import PageSubHeader from '@/components/PageSubHeader.vue'
+import Products from '@/stores/products'
+import Publishers from '@/stores/publishers'
+import Slips from '@/stores/slip/purchase'
 
-export default Vue.extend({
-  components: {
-    PageHeader,
-    PageSubHeader
-  },
-  data() {
-    return {
-      orderedAmount: 3,
-      publishMenu: false,
-      slip: {
-        description: "",
-        number: "",
-        senderId: "",
-        receiverId: "00000000-0000-0000-0000-000000000000",
-        publishedAt: new Date().toISOString().substr(0, 10),
-        approvedAt: new Date().toISOString().substr(0, 10),
-        items: [{ productId: "", amount: 0, price: 0 }]
-      }
-    };
-  },
-  computed: {
-    ...mapState("productModule", ["products"]),
-    ...mapState("publisherModule", ["publishers"])
-  },
-  methods: {
-    morePurchase() {
-      this.slip.items.push({ productId: "", amount: 0, price: 0 });
-    },
-    storing() {
-      const slip = Object.assign({}, this.slip);
+const productModule = getModule(Products)
+const publisherModule = getModule(Publishers)
+const slipModule = getModule(Slips)
 
-      slip.approvedAt = new Date(slip.approvedAt).toISOString();
-      slip.publishedAt = new Date(slip.publishedAt).toISOString();
-
-      this.$store.dispatch("slipModule/purchase/create", slip);
-    }
-  },
-  created() {
-    this.$store.dispatch("publisherModule/retrieve");
-    this.$store.dispatch("productModule/retrieve");
+@Component({
+  components: { PageHeader, PageSubHeader }
+})
+export default class SlipsView extends Vue {
+  private orderedAmount = 3
+  private publishMenu = false
+  private slip = {
+    description: '',
+    number: '',
+    senderId: '',
+    receiverId: '00000000-0000-0000-0000-000000000000',
+    publishedAt: moment().format('YYYY-M-D'),
+    approvedAt: moment().format('YYYY-M-D'),
+    items: [{ productId: '', amount: 0, price: 0 }]
   }
-});
+
+  get products () {
+    return productModule.products
+  }
+
+  get publishers () {
+    return publisherModule.publishers
+  }
+
+  more () {
+    this.slip.items.push({ productId: '', amount: 0, price: 0 })
+  }
+
+  storing () {
+    const slip = Object.assign({}, this.slip, {
+      approvedAt: new Date(this.slip.approvedAt).toISOString(),
+      publishedAt: new Date(this.slip.publishedAt).toISOString()
+    })
+
+    slipModule.create(slip)
+      .then(r => {
+        this.$router.push({ name: 'slip.purchase.detail', params: { id: r.identity } })
+      })
+  }
+
+  created () {
+    productModule.retrieve()
+    publisherModule.retrieve()
+  }
+}
 </script>

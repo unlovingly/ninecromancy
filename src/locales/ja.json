@@ -3,6 +3,10 @@
     "create": "登録",
     "index": "一覧"
   },
+  "customer": {
+    "customer": "顧客",
+    "name": "顧客名"
+  },
   "product": {
     "product": "商品情報",
     "name": "商品名"

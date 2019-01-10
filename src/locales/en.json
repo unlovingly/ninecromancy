@@ -3,6 +3,10 @@
     "create": "Create",
     "index": "List"
   },
+  "customer": {
+    "customer": "Customer",
+    "name": "Name"
+  },
   "product": {
     "product": "Product",
     "name": "Name"

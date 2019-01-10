@@ -1,0 +1,16 @@
+{
+  "extends": [
+    "@vue/typescript",
+    "prettier",
+    "prettier/standard",
+    "prettier/vue",
+    "plugin:vue/recommended",
+    "standard"
+  ],
+  "plugins": ["prettier", "standard", "vue"],
+  "root": true,
+  "rules": {
+    "no-useless-constructor": "off",
+    "typescript/no-unused-vars": "warn"
+  }
+}

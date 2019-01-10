@@ -1,66 +1,82 @@
 <template>
-  <v-card>
-    <v-card-title>
+  <VCard>
+    <VCardTitle>
       {{ $t('shop.stocks.stocks') }}
-      <v-spacer></v-spacer>
-      <v-text-field
+      <VSpacer />
+      <VTextField
         v-model="searchText"
         append-icon="search"
         label="Search"
         single-line
         hide-details
-      ></v-text-field>
-    </v-card-title>
-    <v-data-table :headers="headers" :items="stocks" :search="searchText">
-      <template slot="items" slot-scope="props">
+      />
+    </VCardTitle>
+    <VDataTable
+      :headers="headers"
+      :items="Object.values(stocks)"
+      :search="searchText"
+    >
+      <template
+        slot="items"
+        slot-scope="props"
+      >
         <td
           v-for="(header, index) in headers"
           :key="index"
-        >{{ props.item[header.value] }}</td>
+        >
+          {{ props.item[header.value] }}
+        </td>
       </template>
-      <template slot="no-data">there is nothing here</template>
+      <template slot="no-data">
+        there is nothing here
+      </template>
       <template slot="no-results">
-        <v-alert :value="true" color="info" icon="info">{{ searchText }} なんてないさ</v-alert>
+        <VAlert
+          :value="true"
+          color="info"
+          icon="info"
+        >
+          {{ searchText }} なんてないさ
+        </VAlert>
       </template>
-    </v-data-table>
-  </v-card>
+    </VDataTable>
+  </VCard>
 </template>
 
 <script lang="ts">
-import * as R from "ramda";
-import { Observable, Subject } from "rxjs";
-import { concatMap, filter, map, pluck, throttleTime } from "rxjs/operators";
-import Vue from "vue";
-import { mapState } from "vuex";
-import { Shop } from "@/models/Shop";
+import { concatMap, filter, map, throttleTime } from 'rxjs/operators'
+import Vue from 'vue'
+import Component from 'vue-class-component'
+import { getModule } from 'vuex-module-decorators'
+import i18n from '@/plugins/i18n'
+import Stocks from '@/stores/stocks'
 
-export default Vue.extend({
-  data() {
-    return {
-      headers: [
-        { text: this.$t("shop.stocks.pluCode"), value: "pluCode" },
-        { text: this.$t("shop.shop"), value: "shopId" },
-        { text: this.$t("product.product"), value: "productId" },
-        { text: this.$t("shop.stocks.price"), value: "price" },
-        { text: this.$t("shop.stocks.amount"), value: "amount" }
-      ],
-      searchText: ""
-    };
-  },
+const stockModule = getModule(Stocks)
 
-  subscriptions: function() {
+@Component({
+  subscriptions () {
     return {
-      search: this.$watchAsObservable("searchText").pipe(
+      inquire: this.$watchAsObservable('shops').pipe(
         map(o => o.newValue),
         filter(q => q.length > 2),
         throttleTime(750),
-        concatMap(q => this.$store.dispatch("stockModule/retrieve", q))
+        concatMap(q => this.$store.dispatch('stockModule/retrieve', q))
       )
-    };
-  },
-
-  computed: {
-    ...mapState("stockModule", ["stocks"])
+    }
   }
-});
+})
+export default class ShopsView extends Vue {
+  headers = [
+    { text: i18n.t('shop.stocks.pluCode'), value: 'pluCode' },
+    { text: i18n.t('shop.shop'), value: 'shopId' },
+    { text: i18n.t('product.product'), value: 'productId' },
+    { text: i18n.t('shop.stocks.price'), value: 'price' },
+    { text: i18n.t('shop.stocks.amount'), value: 'amount' }
+  ]
+  searchText = ''
+
+  get stocks () {
+    return stockModule.stocks
+  }
+}
 </script>

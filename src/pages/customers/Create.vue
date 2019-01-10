@@ -1,10 +1,10 @@
 <template>
   <VForm ref="form">
-    <PageHeader>{{ $t('publisher.publisher') }}</PageHeader>
+    <PageHeader>{{ $t('customer.customer') }}</PageHeader>
 
     <VTextField
-      v-model="publisher.name"
-      :label="$t('publisher.name')"
+      v-model="customer.name"
+      :label="$t('customer.name')"
       required
     />
 
@@ -19,20 +19,20 @@ import Vue from 'vue'
 import Component from 'vue-class-component'
 import { getModule } from 'vuex-module-decorators'
 import PageHeader from '@/components/PageHeader.vue'
-import Publishers from '@/stores/publishers'
+import Customers from '@/stores/customers'
 
-const publisherModule = getModule(Publishers)
+const customerModule = getModule(Customers)
 
 @Component({
   components: { PageHeader }
 })
-export default class CreatePublishersView extends Vue {
-  publisher = {
+export default class CustomersView extends Vue {
+  customer = {
     name: ''
   }
 
   create () {
-    publisherModule.create(this.publisher)
+    customerModule.create(this.customer)
   }
 }
 </script>

@@ -1,59 +1,64 @@
 <template>
-  <v-form>
-    <v-text-field
-      v-model="name"
-      :label="$t('name')"
-      required
-    ></v-text-field>
+  <VForm>
+    <PageHeader>{{ $t('product.product') }}</PageHeader>
 
-    <v-combobox
-      v-model="publisher"
-      :items="publishers"
-      item-text="name"
-      item-value="id"
-      :label="$t('publisher.name')"
+    <VTextField
+      v-model="product.name"
+      :label="$t('product.name')"
       required
     />
 
-    <v-btn
-      :disabled="!valid"
-      @click="create(name, publisher)"
-    >
+    <VAutocomplete
+      v-model="product.publisherId"
+      :items="Object.values(publishers)"
+      item-text="name"
+      :label="$t('publisher.name')"
+      item-value="identity"
+      required
+    />
+
+    <VBtn @click="create">
       submit
-    </v-btn>
-  </v-form>
+    </VBtn>
+  </VForm>
 </template>
 
 <script lang="ts">
-import * as R from "ramda";
-import Vue from "vue";
-import { mapState } from "vuex";
-import { Publisher } from "@/models/Publisher";
-import { Product } from "@/models/Product";
+import Vue from 'vue'
+import Component from 'vue-class-component'
+import { getModule } from 'vuex-module-decorators'
+import PageHeader from '@/components/PageHeader.vue'
+import PageSubHeader from '@/components/PageSubHeader.vue'
+import Products from '@/stores/products'
+import Publishers from '@/stores/publishers'
 
-export default Vue.extend({
-  data() {
-    return {
-      name: "",
-      publisher: null
-    };
-  },
+const productModule = getModule(Products)
+const publisherModule = getModule(Publishers)
 
-  computed: {
-    valid: function() {
-      // TODO
-      return !R.isEmpty(this.name) && !R.isNil(this.publisher);
-    },
-    ...mapState("publisherModule", ["publishers"])
-  },
-
-  methods: {
-    create(name: string, publisher: Publisher) {
-      this.$store.dispatch(
-        "productModule/create",
-        new Product(undefined, name, publisher.id)
-      );
-    }
+@Component({
+  components: { PageHeader, PageSubHeader }
+})
+export default class CreateProductView extends Vue {
+  product = {
+    name: '',
+    publisherId: ''
   }
-});
+
+  get products () {
+    return productModule.products
+  }
+
+  get publishers () {
+    return publisherModule.publishers
+  }
+
+  create () {
+    productModule.create(this.product)
+  }
+
+  created () {
+    productModule.retrieve()
+    publisherModule.retrieve()
+  }
+}
 </script>

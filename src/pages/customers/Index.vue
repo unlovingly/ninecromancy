@@ -1,7 +1,7 @@
 <template>
   <VCard v-if="isNotEmpty">
     <VCardTitle>
-      {{ $t('shop.shop') }}
+      {{ $t('customer.name') }}
       <VSpacer />
       <VTextField
         v-model="search"
@@ -13,7 +13,7 @@
     </VCardTitle>
     <VDataTable
       :headers="headers"
-      :items="Object.values(shops)"
+      :items="Object.values(customers)"
       :search="search"
     >
       <template
@@ -24,7 +24,6 @@
       </template>
       <template slot="no-data">
         <VAlert
-          :value="true"
           color="warning"
           icon="priority_high"
           outline
@@ -34,7 +33,6 @@
       </template>
       <template slot="no-results">
         <VAlert
-          :value="true"
           color="info"
           icon="info"
         >
@@ -47,39 +45,32 @@
 </template>
 
 <script lang="ts">
-import { of } from 'rxjs'
-import { map, merge, pluck } from 'rxjs/operators'
 import Vue from 'vue'
 import Component from 'vue-class-component'
 import { getModule } from 'vuex-module-decorators'
 import NotFound from '@/components/NotFound.vue'
 import i18n from '@/plugins/i18n'
-import Shops from '@/stores/shops'
+import Customers from '@/stores/customers'
 
-const shopModule = getModule(Shops)
+const customerModule = getModule(Customers)
 
 @Component({
-  components: { NotFound },
-  subscriptions () {
-    return {
-      isNotEmpty: this.$watchAsObservable('shops').pipe(
-        pluck('newValue'),
-        merge(of(shopModule.shops)),
-        map((x) => Object.values(x).length > 0)
-      )
-    }
-  }
+  components: { NotFound }
 })
-export default class ShopsView extends Vue {
-  headers = [{ text: i18n.t('shop.name'), value: 'name' }]
+export default class CustomersView extends Vue {
+  headers = [{ text: i18n.t('customer.name'), value: 'name' }]
   search = ''
 
-  get shops () {
-    return shopModule.shops
+  get customers () {
+    return customerModule.customers
+  }
+
+  get isNotEmpty () {
+    return Object.values(this.customers).length > 0
   }
 
   created () {
-    this.$store.dispatch('shopModule/retrieve')
+    customerModule.retrieve()
   }
 }
 </script>

@@ -8,28 +8,28 @@ import {
   Mutation,
   VuexModule
 } from 'vuex-module-decorators'
-import { Product, ProductLike } from '@/models/Product'
+import { Customer, CustomerLike } from '@/models/Customer'
 import store from '@/plugins/store'
 import Application from '@/stores/app'
 
 const appModule = getModule(Application)
-const api = appModule.app.api + '/products'
+const api = appModule.app.api + '/customers'
 
 const getter = encaseP<any, any, string>(axios.get)
-const poster = encaseP2<any, any, string, ProductLike>(axios.post)
+const poster = encaseP2<any, any, string, CustomerLike>(axios.post)
 
 interface State {
-  [key: string]: Product
+  [key: string]: Customer
 }
 
-@Module({ dynamic: true, name: 'productModule', namespaced: true, store })
-export default class Products extends VuexModule {
-  products: State = {}
+@Module({ dynamic: true, name: 'customerModule', namespaced: true, store })
+export default class Customers extends VuexModule {
+  customers: State = {}
 
   @Action
   retrieve () {
     return getter(api)
-      .map(r => r.data as Array<Product>)
+      .map(r => r.data as Array<Customer>)
       .map(r => {
         this.context.commit('storeAll', r)
 
@@ -39,9 +39,9 @@ export default class Products extends VuexModule {
   }
 
   @Action
-  create (product: ProductLike) {
-    return poster(api, product)
-      .map(r => r.data as Product)
+  create (customer: CustomerLike) {
+    return poster(api, customer)
+      .map(r => r.data as Customer)
       .map(r => {
         this.context.commit('store', r)
 
@@ -51,15 +51,15 @@ export default class Products extends VuexModule {
   }
 
   @Mutation
-  store (product: Product) {
-    Vue.set(this.products, product.identity, product)
+  store (customer: Customer) {
+    Vue.set(this.customers, customer.identity, customer)
   }
 
   @Mutation
-  storeAll (products: Array<Product>) {
+  storeAll (customers: Array<Customer>) {
     // ミューテーションを重ねていいのか？
-    products.forEach(product =>
-      Vue.set(this.products, product.identity, product)
+    customers.forEach(customer =>
+      Vue.set(this.customers, customer.identity, customer)
     )
   }
 }

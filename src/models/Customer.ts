@@ -1,7 +1,7 @@
-export class Publisher {
+export class Customer {
   constructor (public identity: string = '', public name: string) {}
 }
 
-export class PublisherLike {
+export class CustomerLike {
   constructor (public name: string) {}
 }

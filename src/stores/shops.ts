@@ -1,50 +1,75 @@
-import axios from 'axios';
+import axios from 'axios'
+import { encaseP, encaseP2 } from 'fluture'
+import Vue from 'vue'
 import {
-  ActionContext,
-  ActionTree,
-  ModuleTree,
-  MutationTree
-} from 'vuex';
-import { Shop } from '@/models/Shop';
+  getModule,
+  Action,
+  Module,
+  Mutation,
+  VuexModule
+} from 'vuex-module-decorators'
+import { Shop, ShopLike } from '@/models/Shop'
+import store from '@/plugins/store'
+import Application from '@/stores/app'
 
-const api = 'http://localhost:9000/shops'
+const appModule = getModule(Application)
+const api = appModule.app.api + '/shops'
+
+const getter = encaseP<any, any, string>(axios.get)
+const poster = encaseP2<any, any, string, ShopLike>(axios.post)
 
 interface State {
-  shops: Array<Shop>;
+  [key: string]: Shop
 }
 
-const state: State = {
-  shops: [
-    { id: "00001", name: "Shop One", stocks: [] },
-  ]
-}
+@Module({ dynamic: true, name: 'shopModule', namespaced: true, store })
+export default class Shops extends VuexModule {
+  shops: State = {}
 
-const actions = <ActionTree<State, any>>{
-  retrieve(store: ActionContext<State, any>) {
-    axios.get(api)
-      .then((r) => {
-        store.commit('retrieve', r.data)
+  @Action
+  retrieve () {
+    return getter(api)
+      .map(r => r.data as Array<Shop>)
+      .map(r => {
+        this.context.commit('storeAll', r)
+
+        return r
       })
-  },
+      .promise()
+  }
 
-  create(store: ActionContext<State, any>, shop: Shop) {
-    store.commit('store', shop);
-  },
-}
+  @Action
+  show (id: string) {
+    return getter(`${api}/detail/${id}`)
+      .map(r => r.data as Shop)
+      .map(r => {
+        this.context.commit('store', r)
 
-const mutations = <MutationTree<State>>{
-  retrieve(state: State, payload: Shop) {
-    state.shops.push(payload)
-  },
+        return r
+      })
+      .promise()
+  }
 
-  store(state: State, payload: Shop) {
-    state.shops.push(payload)
-  },
-}
+  @Action
+  create (shop: ShopLike) {
+    return poster(api, shop)
+      .map(r => r.data as Shop)
+      .map(r => {
+        this.context.commit('store', r)
 
-export const shopModule = {
-  namespaced: true,
-  actions: actions,
-  state: state,
-  mutations: mutations,
+        return r
+      })
+      .promise()
+  }
+
+  @Mutation
+  store (shop: Shop) {
+    Vue.set(this.shops, shop.identity, shop)
+  }
+
+  @Mutation
+  storeAll (shops: Array<Shop>) {
+    // ミューテーションを重ねていいのか？
+    shops.forEach(shop => Vue.set(this.shops, shop.identity, shop))
+  }
 }
