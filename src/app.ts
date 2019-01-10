@@ -11,7 +11,7 @@ const shopModule = getModule(Shops)
 
 @Component({
   components: { RecursiveNavBar }
-  })
+})
 export default class MainView extends Vue {
   private nodes = nodes
 
